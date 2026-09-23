@@ -36,7 +36,7 @@ Resources:
     Properties:
       CodeUri: src/handlers/crud_syllabus/
       Handler: app.lambda_handler
-      Runtime: python3.9
+      Runtime: python3.10
       VpcConfig:
         SecurityGroupIds:
           - sg-0ebc920d35b5e46a3
