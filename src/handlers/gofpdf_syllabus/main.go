@@ -982,7 +982,7 @@ func trackingSection(pdf *gofpdf.Fpdf, pageStyle PageStyle, data map[string]any)
 	FontStyle(pdf, "B", 9, 0, "Helvetica")
 	pdf.CellFormat(pageStyle.WC, 6, tr("Fecha"),
 		"BR", 0, "CM", false, 0, "")
-	date_elaboro, date_elaboroOk := data["elaboro"]
+	date_elaboro, date_elaboroOk := data["fecha_elaboro"]
 	if !date_elaboroOk || date_elaboro == nil {
 		date_elaboro = ""
 	}
