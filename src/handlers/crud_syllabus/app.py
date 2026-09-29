@@ -94,14 +94,25 @@ class EvaluacionNueva(BaseModel):
 class Bibliografia(BaseModel):
     basicas: Optional[List[str]] = []
     complementarias: Optional[List[str]] = []
+    bases: Optional[List[str]] = []
     paginasWeb: Optional[List[str]] = []
+
+    class Config:
+        extra = "allow"  # Conserva campos de documentos historicos
 
 
 class Seguimiento(BaseModel):
+    elaboro: Optional[str] = None
+    reviso: Optional[str] = None
+    aprobo: Optional[str] = None
+    fecha_elaboro: Optional[str] = None
     fechaRevisionConsejo: Optional[str] = None
     fechaAprobacionConsejo: Optional[str] = None
     numeroActa: Optional[str] = None
     archivo: Optional[str] = None
+
+    class Config:
+        extra = "allow"  # Conserva campos de documentos historicos
 
 
 class SyllabusModel(BaseModel):
@@ -448,7 +459,7 @@ def set_version(syllabus_data: dict, syllabus_collection):
 
 def update_old_syllabus(syllabus_data: dict, syllabus_collection):
     """
-    Marca todas las versiones anteriores del mismo syllabus como no actuales.
+    Marca todas las versiones anteriores del mismo syllabus como no actuales e inactivas.
     Esto garantiza que solo una versión esté activa por syllabus_code.
     """
     try:
@@ -461,6 +472,7 @@ def update_old_syllabus(syllabus_data: dict, syllabus_collection):
                 query,
                 {
                     "$set": {"syllabus_actual": False}
+                    # "$set": {"syllabus_actual": False, "activo": False}
                 }
             )
     except Exception as ex:
