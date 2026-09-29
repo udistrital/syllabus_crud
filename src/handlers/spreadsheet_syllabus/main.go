@@ -275,154 +275,6 @@ func createHeader(template *excelize.File, sheetName string, style map[string]in
 	drawHeaderImages(template, sheetName)
 }
 
-func natureAcademicSpace(template *excelize.File, sheetName string, style map[string]int, data map[string]any) {
-	// Naturaleza del espacio académico
-	template.MergeCell(sheetName, "A9", "J9")
-	template.SetCellStyle(sheetName, "A9", "J9", style["boldFillStyle"])
-	template.SetCellValue(sheetName, "A9", "NATURALEZA DEL ESPACIO ACADÉMICO (X):")
-	template.SetCellStyle(sheetName, "A10", "J10", style["simpleStyle"])
-	template.SetRowHeight(sheetName, 10, 32)
-	template.SetCellValue(sheetName, "A10", "Obligatorio Básico")
-	isOB := data["es_obligatorio_basico"]
-	ob := ""
-	if isOB == true {
-		ob = "X"
-	}
-	template.SetCellValue(sheetName, "B10", fmt.Sprintf("%v", ob))
-
-	template.SetCellValue(sheetName, "C10", "Obligatorio Comple-\nmentario")
-	isOC := data["es_obligatorio_comp"]
-	oc := ""
-	if isOC == true {
-		oc = "X"
-	}
-	template.SetCellValue(sheetName, "D10", fmt.Sprintf("%v", oc))
-
-	template.SetCellValue(sheetName, "E10", "Electivo Intrínseco")
-	isEI := data["es_electivo_int"]
-	ei := ""
-	if isEI == true {
-		ei = "X"
-	}
-	template.SetCellValue(sheetName, "F10", fmt.Sprintf("%v", ei))
-
-	template.SetCellValue(sheetName, "G10", "Electivo Extrínseco")
-	isEE := data["es_electivo_ext"]
-	ee := ""
-	if isEE == true {
-		ee = "X"
-	}
-	template.SetCellValue(sheetName, "H10", fmt.Sprintf("%v", ee))
-
-	template.SetCellValue(sheetName, "I10", "Electivo")
-	isE := data["es_electivo"]
-	e := ""
-	if isE == true {
-		e = "X"
-	}
-	template.SetCellValue(sheetName, "J10", fmt.Sprintf("%v", e))
-}
-func characterAcademicSpace(template *excelize.File, sheetName string, style map[string]int, data map[string]any) {
-	// Carácter del espacio académico
-	template.MergeCell(sheetName, "A11", "J11")
-	template.SetCellStyle(sheetName, "A11", "J11", style["boldFillStyle"])
-	template.SetCellValue(sheetName, "A11", "CARÁCTER DEL ESPACIO ACADÉMICO (X):")
-	template.SetCellStyle(sheetName, "A12", "J12", style["simpleStyle"])
-	template.MergeCell(sheetName, "A12", "B12")
-	template.SetCellValue(sheetName, "A12", "Teórico")
-	isTheoretical := data["es_teorico"]
-	theoretical := ""
-	if isTheoretical == true {
-		theoretical = "X"
-	}
-	template.SetCellValue(sheetName, "C12", fmt.Sprintf("%v", theoretical))
-
-	template.MergeCell(sheetName, "D12", "E12")
-	template.SetCellValue(sheetName, "D12", "Práctico")
-	isPractical := data["es_practico"]
-	practical := ""
-	if isPractical == true {
-		practical = "X"
-	}
-	template.SetCellValue(sheetName, "F12", fmt.Sprintf("%v", practical))
-
-	template.MergeCell(sheetName, "G12", "H12")
-	template.SetCellValue(sheetName, "G12", "Teórico-Práctico")
-	isTheoreticalPractical := data["es_teorico_practico"]
-	theoreticalPractical := ""
-	if isTheoreticalPractical == true {
-		theoreticalPractical = "X"
-	}
-	template.MergeCell(sheetName, "I12", "J12")
-	template.SetCellValue(sheetName, "I12", fmt.Sprintf("%v", theoreticalPractical))
-}
-
-func modalityAcademicSpace(template *excelize.File, sheetName string, style map[string]int, data map[string]any) {
-	// Modalidad de oferta del espacio académico
-	template.MergeCell(sheetName, "A13", "J13")
-	template.SetCellStyle(sheetName, "A13", "J13", style["boldFillStyle"])
-	template.SetCellValue(sheetName, "A13", "MODALIDAD DE OFERTA DEL ESPACIO ACADÉMICO (X):")
-	template.SetCellStyle(sheetName, "A14", "J14", style["simpleStyle"])
-	template.SetRowHeight(sheetName, 14, 50)
-	template.SetCellValue(sheetName, "A14", "Presencial")
-	isPresenceBased := data["es_presencial"]
-	presenceBased := ""
-	if isPresenceBased == true {
-		presenceBased = "X"
-	}
-	template.SetCellValue(sheetName, "B14", fmt.Sprintf("%v", presenceBased))
-
-	template.SetCellValue(sheetName, "C14", "Presencial con incorpo-\nración de TIC")
-	isPresenceBasedTIC := data["es_presencial_tic"]
-	presenceBasedTIC := ""
-	if isPresenceBasedTIC == true {
-		presenceBasedTIC = "X"
-	}
-	template.SetCellValue(sheetName, "D14", fmt.Sprintf("%v", presenceBasedTIC))
-
-	template.SetCellValue(sheetName, "E14", "Virtual")
-	isOnline := data["es_virtual"]
-	online := ""
-	if isOnline == true {
-		online = "X"
-	}
-	template.SetCellValue(sheetName, "F14", fmt.Sprintf("%v", online))
-
-	template.SetCellValue(sheetName, "G14", "Otros:")
-	isOthersModality := data["otra_modalidad"]
-	othersModality := ""
-	if isOthersModality == true {
-		othersModality = "X"
-	}
-	template.SetCellValue(sheetName, "H14", fmt.Sprintf("%v", othersModality))
-
-	whichModality, okWhichModality := data["cual_otra_modalidad"]
-	template.MergeCell(sheetName, "I14", "J14")
-	if okWhichModality && whichModality != nil {
-		template.SetCellValue(sheetName, "I14", fmt.Sprintf("Cuál: %v", whichModality))
-	} else {
-		template.SetCellValue(sheetName, "I14", "Cuál:")
-	}
-
-}
-
-func languageAcademicSpace(template *excelize.File, sheetName string, style map[string]int, data map[string]any) {
-	template.MergeCell(sheetName, "A15", "J15")
-	template.SetCellStyle(sheetName, "A15", "J15", style["boldFillStyle"])
-	template.SetCellValue(sheetName, "A15", "IDIOMA EN EL QUE SE OFERTA EL ESPACIO ACADÉMICO:")
-	template.SetCellStyle(sheetName, "A16", "C16", style["simpleStyle"])
-	template.SetCellStyle(sheetName, "D16", "J16", style["simpleLeftStyle"])
-	template.MergeCell(sheetName, "A16", "C16")
-	template.MergeCell(sheetName, "D16", "J16")
-	template.SetCellValue(sheetName, "A16", "Idioma")
-	language, okLanguage := data["idiomas"]
-	if okLanguage && language != nil {
-		template.SetCellValue(sheetName, "D16", fmt.Sprintf("%v", language))
-	} else {
-		template.SetCellValue(sheetName, "D16", "")
-	}
-}
-
 func institutionalSection(template *excelize.File, sheetName string, style map[string]int, data map[string]any, index *int) {
 	mergeSet(template, sheetName, 1, 10, *index, "boldFillStyle", "IDENTIFICACIÓN INSTITUCIONAL", style, hRow)
 	*index++
@@ -573,6 +425,36 @@ func purposeSection(template *excelize.File, sheetName string, style map[string]
 	}
 
 	p, _ := prop[0].(map[string]interface{})
+
+	// Nuevo formato (y clásico): PFA de programa (con campos legacy opcionales)
+	if _, hasPFA := p["pfa_programa"]; hasPFA {
+		for i, item := range prop {
+			itemMap, isMap := item.(map[string]interface{})
+			if !isMap {
+				continue
+			}
+			generateLineExcel(template, sheetName, "bold", style, fmt.Sprintf("PROPÓSITO %v", i+1), index)
+			*index++
+			generateLineExcel(template, sheetName, "bold", style, "PFA del Programa/Proyecto", index)
+			*index++
+			generateLineExcel(template, sheetName, "simple", style, fmt.Sprintf("%v", itemMap["pfa_programa"]), index)
+			*index++
+			if value, hasValue := itemMap["pfa_asignatura"]; hasValue && value != nil && fmt.Sprintf("%v", value) != "" {
+				generateLineExcel(template, sheetName, "bold", style, "PFA de la Asignatura", index)
+				*index++
+				generateLineExcel(template, sheetName, "simple", style, fmt.Sprintf("%v", value), index)
+				*index++
+			}
+			if value, hasValue := itemMap["competencias"]; hasValue && value != nil && fmt.Sprintf("%v", value) != "" {
+				generateLineExcel(template, sheetName, "bold", style, "Competencias", index)
+				*index++
+				generateLineExcel(template, sheetName, "simple", style, fmt.Sprintf("%v", value), index)
+				*index++
+			}
+		}
+		return
+	}
+
 	// Verificar si están los propósitos en versión legacy
 	_, exist := p["propositos_formación_legacy"]
 
@@ -765,22 +647,23 @@ func thematicContentSection(template *excelize.File, sheetName string, style map
 		template.SetCellValue(sheetName, aLabel, "")
 	}
 
-	*index++
-	aLabel = fmt.Sprintf("A%v", *index)
-	jLabel = fmt.Sprintf("J%v", *index)
-	template.MergeCell(sheetName, aLabel, jLabel)
-	template.SetCellStyle(sheetName, aLabel, jLabel, style["boldLeftLRStyle"])
-	template.SetCellValue(sheetName, aLabel, "Temas y subtemas:")
-
-	*index++
-	aLabel = fmt.Sprintf("A%v", *index)
-	jLabel = fmt.Sprintf("J%v", *index)
-	template.MergeCell(sheetName, aLabel, jLabel)
-	template.SetCellStyle(sheetName, aLabel, jLabel, style["simpleJustifyLRStyle"])
 	thematicDetails, okThematicDet := data["contenido_tematico_detalle"]
-	if okThematicDet && thematicDetails != nil {
+	thematicDetList, _ := thematicDetails.([]any)
+	if okThematicDet && thematicDetails != nil && len(thematicDetList) > 0 {
+		*index++
+		aLabel = fmt.Sprintf("A%v", *index)
+		jLabel = fmt.Sprintf("J%v", *index)
+		template.MergeCell(sheetName, aLabel, jLabel)
+		template.SetCellStyle(sheetName, aLabel, jLabel, style["boldLeftLRStyle"])
+		template.SetCellValue(sheetName, aLabel, "Temas y subtemas:")
+
+		*index++
+		aLabel = fmt.Sprintf("A%v", *index)
+		jLabel = fmt.Sprintf("J%v", *index)
+		template.MergeCell(sheetName, aLabel, jLabel)
+		template.SetCellStyle(sheetName, aLabel, jLabel, style["simpleJustifyLRStyle"])
 		thematicDetStr := ""
-		for _, topic := range thematicDetails.([]any) {
+		for _, topic := range thematicDetList {
 			topicAux := topic.(map[string]any)
 			topicName, topicNameOk := topicAux["nombre"]
 			if !topicNameOk || topicName == nil {
@@ -798,123 +681,8 @@ func thematicContentSection(template *excelize.File, sheetName string, style map
 		}
 		template.SetRowHeight(sheetName, *index, 70)
 		template.SetCellValue(sheetName, aLabel, fmt.Sprintf("%v\n\n", thematicDetStr))
-	} else {
-		template.SetCellValue(sheetName, aLabel, "")
 	}
 	*index++
-}
-
-func strategiesSection(template *excelize.File, sheetName string, style map[string]int, data map[string]any, index *int) {
-	// Crear el título de la sección
-	*index++
-	aLabel := fmt.Sprintf("A%v", *index)
-	jLabel := fmt.Sprintf("J%v", *index)
-	template.MergeCell(sheetName, aLabel, jLabel)
-	template.SetCellStyle(sheetName, aLabel, jLabel, style["boldFillStyle"])
-	template.SetCellValue(sheetName, aLabel, "VII. ESTRATEGIAS DE ENSEÑANZA QUE FAVORECEN EL APRENDIZAJE")
-
-	// Verificar que existan datos de estrategias
-	strategiesData, ok := data["estrategias_ensenanza"]
-	if !ok || strategiesData == nil {
-		*index++
-		template.MergeCell(sheetName, fmt.Sprintf("A%v", *index), fmt.Sprintf("J%v", *index))
-		template.SetCellStyle(sheetName, fmt.Sprintf("A%v", *index), fmt.Sprintf("J%v", *index), style["simpleJustifyStyle"])
-		template.SetCellValue(sheetName, fmt.Sprintf("A%v", *index), "No hay estrategias de enseñanza definidas.")
-		return
-	}
-
-	// Verificar si la estructura es un Array, si lo es son estrategias legacy
-	estr_leg, estr_leg_ok := strategiesData.([]interface{})
-	if estr_leg_ok {
-		var parrafo_estrategias string
-
-		// itera sobre cada elemento del array-slice y agrega al párrago final
-		for _, item := range estr_leg {
-			parrafo_estrategias += fmt.Sprintf(" • %v \n", item)
-		}
-		*index++
-		template.SetRowHeight(sheetName, *index, 50)
-		generateLineExcel(template, sheetName, "simple", style, parrafo_estrategias, index)
-		return
-	}
-
-	strategiesMap, ok := strategiesData.(map[string]any)
-	if !ok {
-		*index++
-		template.MergeCell(sheetName, fmt.Sprintf("A%v", *index), fmt.Sprintf("J%v", *index))
-		template.SetCellStyle(sheetName, fmt.Sprintf("A%v", *index), fmt.Sprintf("J%v", *index), style["simpleJustifyStyle"])
-		template.SetCellValue(sheetName, fmt.Sprintf("A%v", *index), "Los datos de estrategias no tienen el formato esperado.")
-		return
-	}
-
-	// Definir la estructura de estrategias organizadas en grilla 3x3
-	type Strategy struct {
-		key   string
-		label string
-	}
-
-	strategyGrid := [][]Strategy{
-		{
-			{"tradicional", "Tradicional"},
-			{"basado_proyectos", "Basado en Proyectos"},
-			{"basado_tecnologia", "Basado en Tecnología"},
-		},
-		{
-			{"basado_problemas", "Basado en Problemas"},
-			{"colaborativo", "Colaborativo"},
-			{"basado_experiencias", "Basado en Experiencias"},
-		},
-		{
-			{"aprendizaje_activo", "Aprendizaje Activo"},
-			{"autodirigido", "Autodirigido"},
-			{"centrado_estudiante", "Centrado en el estudiante"},
-		},
-	}
-
-	// Renderizar cada fila de estrategias
-	for _, strategyRow := range strategyGrid {
-		*index++
-		template.SetRowHeight(sheetName, *index, 30)
-
-		// Procesar las tres estrategias de esta fila
-		for colIndex, strategy := range strategyRow {
-			var nameStartCol, nameEndCol, markCol string
-
-			switch colIndex {
-			case 0:
-				nameStartCol = "A"
-				nameEndCol = "B"
-				markCol = "C"
-			case 1:
-				nameStartCol = "D"
-				nameEndCol = "E"
-				markCol = "F"
-			case 2:
-				nameStartCol = "G"
-				nameEndCol = "I"
-				markCol = "J"
-			}
-
-			// Configurar celda del nombre de la estrategia
-			nameStartCell := fmt.Sprintf("%s%d", nameStartCol, *index)
-			nameEndCell := fmt.Sprintf("%s%d", nameEndCol, *index)
-			template.MergeCell(sheetName, nameStartCell, nameEndCell)
-			template.SetCellStyle(sheetName, nameStartCell, nameEndCell, style["simpleLeftStyle"])
-			template.SetCellValue(sheetName, nameStartCell, strategy.label)
-
-			// Determinar si la estrategia está seleccionada
-			mark := ""
-			if value, exists := strategiesMap[strategy.key]; exists && value == true {
-				mark = "X"
-			}
-
-			// Configurar celda de marca
-			markCell := fmt.Sprintf("%s%d", markCol, *index)
-			template.SetCellStyle(sheetName, markCell, markCell, style["simpleStyle"])
-			template.SetCellValue(sheetName, markCell, mark)
-		}
-	}
-
 }
 
 func evaluationSection(template *excelize.File, sheetName string, style map[string]int, data map[string]any, index *int) {
@@ -941,8 +709,15 @@ func evaluationSection(template *excelize.File, sheetName string, style map[stri
 		for _, item := range evals {
 			if value, ok := item.(map[string]interface{}); ok {
 				texto += fmt.Sprintf(" - Nombre: %v\n", value["nombre"])
-				texto += fmt.Sprintf("\t· Momento: %v\n", value["momento"])
-				texto += fmt.Sprintf("\t· Estrategia: %v\n\n", value["estrategia"])
+				texto += fmt.Sprintf("\t· Porcentaje: %v\n", value["porcentaje"])
+				// Campos legacy (solo si existen)
+				if momento, hasMomento := value["momento"]; hasMomento && momento != nil {
+					texto += fmt.Sprintf("\t· Momento: %v\n", momento)
+				}
+				if estrategia, hasEstrategia := value["estrategia"]; hasEstrategia && estrategia != nil {
+					texto += fmt.Sprintf("\t· Estrategia: %v\n", estrategia)
+				}
+				texto += "\n"
 			}
 		}
 	}
