@@ -9,7 +9,7 @@ from typing import List, Dict, Optional, Any, Union
 
 import pytz
 from bson import ObjectId
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from pymongo import MongoClient, ASCENDING, DESCENDING, errors
 
 # Required environment variables
@@ -43,17 +43,17 @@ class ResultadoDetallado(BaseModel):
 
 class CompetenciaCompleta(BaseModel):
     competencia: str  # Descripción general de la competencia
-    resultados: List[ResultadoDetallado]  # Lista de resultados específicos
+    resultados: list[ResultadoDetallado]  # Lista de resultados específicos
 
 
 # MODELOS LEGACY COMPATIBLES
 class ResultadoAprendizajeLegacy(BaseModel):
-    pfa_programa: Optional[str] = None
-    pfa_asignatura: Optional[str] = None
-    competencias: Optional[str] = None
+    pfa_programa: str | None = None
+    pfa_asignatura: str | None = None
+    competencias: str | None = None
     # Campos del nuevo formato
-    competencia: Optional[str] = None
-    resultados: Optional[List[ResultadoDetallado]] = None
+    competencia: str | None = None
+    resultados: list[ResultadoDetallado] | None = None
 
 
 class EstrategiaLegacy(BaseModel):
@@ -61,10 +61,10 @@ class EstrategiaLegacy(BaseModel):
 
 
 class EvaluacionLegacy(BaseModel):
-    descripcion: Optional[str] = None
-    evaluaciones: Optional[List[Dict]] = None
+    descripcion: str | None = None
+    evaluaciones: list[dict] | None = None
     # Campos del nuevo formato
-    tipos_evaluacion: Optional[List[Dict]] = None
+    tipos_evaluacion: list[dict] | None = None
 
 
 class TipoEvaluacion(BaseModel):
@@ -73,13 +73,13 @@ class TipoEvaluacion(BaseModel):
     porcentaje: int  # Peso porcentual (puede ser 0 para tipos inactivos)
     trabajo_tipo: str  # I (Individual), G (Grupal)
     tipo_nota: str = "0-5"  # Escala de calificación
-    resultados_aprendizaje_asociados: List[str] = []  # IDs de resultados asociados
+    resultados_aprendizaje_asociados: list[str] = []  # IDs de resultados asociados
 
 
 class EvaluacionNueva(BaseModel):
-    tipos_evaluacion: List[TipoEvaluacion]
+    tipos_evaluacion: list[TipoEvaluacion]
     
-    @validator('tipos_evaluacion')
+    @field_validator('tipos_evaluacion')
     def validate_porcentajes_activos(cls, v):
         """
         Valida que los porcentajes activos tengan sentido académico.
@@ -117,28 +117,28 @@ class Seguimiento(BaseModel):
 
 class SyllabusModel(BaseModel):
     """Modelo de datos del Syllabus"""
-    syllabus_code: Optional[str] = None
-    version: Optional[int] = 0
-    syllabus_actual: Optional[bool] = False
+    syllabus_code: str | None = None
+    version: int | None = 0
+    syllabus_actual: bool | None = False
     espacio_academico_id: int
-    proyecto_curricular_ids: List[int] 
-    plan_estudios_ids: List[int] 
-    justificacion: Optional[str] = None
-    objetivo_general: Optional[str] = None
-    objetivos_especificos: Optional[List[ObjetivoEspecifico]] = None
-    resultados_aprendizaje: Optional[List[Dict]] = None  # Más flexible para ambos formatos
-    articulacion_resultados_aprendizaje: Optional[str] = None
-    contenido: Optional[Dict] = None
-    estrategias: Optional[Union[Dict[str, bool], List[Dict]]] = None  # Más flexible
-    evaluacion: Optional[Dict] = None  # Más flexible para ambos formatos
-    bibliografia: Optional[Bibliografia] = None
-    seguimiento: Optional[Seguimiento] = None
-    sugerencias: Optional[str] = None
-    recursos_educativos: Optional[str] = None
-    practicas_academicas: Optional[str] = None
-    vigencia: Optional[Dict] = None
-    idioma_espacio_id: Optional[List] = None
-    tercero_id: Optional[int] = 0
+    proyecto_curricular_ids: list[int] 
+    plan_estudios_ids: list[int] 
+    justificacion: str | None = None
+    objetivo_general: str | None = None
+    objetivos_especificos: list[ObjetivoEspecifico] | None = None
+    resultados_aprendizaje: list[dict] | None = None  # Más flexible para ambos formatos
+    articulacion_resultados_aprendizaje: str | None = None
+    contenido: dict | None = None
+    estrategias: dict[str, bool] | list[dict] | None = None  # Más flexible
+    evaluacion: dict | None = None  # Más flexible para ambos formatos
+    bibliografia: Bibliografia | None = None
+    seguimiento: Seguimiento | None = None
+    sugerencias: str | None = None
+    recursos_educativos: str | None = None
+    practicas_academicas: str | None = None
+    vigencia: dict | None = None
+    idioma_espacio_id: list | None = None
+    tercero_id: int | None = 0
     activo: bool = Field(default=True)
     
     class Config:
@@ -147,16 +147,16 @@ class SyllabusModel(BaseModel):
 
 class SyllabusCreationModel(SyllabusModel):
     fecha_creacion: datetime = Field(default=local_now())
-    fecha_modificacion: Optional[datetime] = None
+    fecha_modificacion: datetime | None = None
 
 
 class SyllabusUpdateModel(SyllabusModel):
-    fecha_modificacion: Optional[datetime] = Field(default=local_now())
+    fecha_modificacion: datetime | None = Field(default=local_now())
 
 
 class DeleteSyllabusModel(BaseModel):
-    activo: Optional[bool] = Field(default=False)
-    fecha_modificacion: Optional[datetime] = Field(default=local_now())
+    activo: bool | None = Field(default=False)
+    fecha_modificacion: datetime | None = Field(default=local_now())
 
 
 def transform_legacy_to_new_format(syllabus_data: dict) -> dict:

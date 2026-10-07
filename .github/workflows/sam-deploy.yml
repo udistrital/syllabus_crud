@@ -6,6 +6,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/master' && 'prod' || 'test' }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
@@ -20,29 +21,18 @@ jobs:
       - name: Set deployment variables
         id: vars
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-            echo "ENVIRONMENT=prod" >> $GITHUB_ENV
-            echo "STACK_NAME=syllabus-produccion" >> $GITHUB_ENV
-            echo "DB_HOST=${{ secrets.DB_HOST_MASTER }}" >> $GITHUB_ENV
-            echo "DB_PORT=${{ secrets.DB_PORT_MASTER }}" >> $GITHUB_ENV
-            echo "DB_USERNAME=${{ secrets.DB_USERNAME_MASTER }}" >> $GITHUB_ENV
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD_MASTER }}" >> $GITHUB_ENV
-            echo "DB_DBNAME=${{ secrets.DB_DBNAME_MASTER }}" >> $GITHUB_ENV
-          else
-            echo "ENVIRONMENT=preprod" >> $GITHUB_ENV
-            echo "STACK_NAME=pruebas-dos-syllabus" >> $GITHUB_ENV
-            echo "DB_HOST=${{ secrets.DB_HOST_TEST }}" >> $GITHUB_ENV
-            echo "DB_PORT=${{ secrets.DB_PORT_TEST }}" >> $GITHUB_ENV
-            echo "DB_USERNAME=${{ secrets.DB_USERNAME_TEST }}" >> $GITHUB_ENV
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD_TEST }}" >> $GITHUB_ENV
-            echo "DB_DBNAME=${{ secrets.DB_DBNAME_TEST }}" >> $GITHUB_ENV
-          fi
+          echo "ENVIRONMENT=${{ vars.ENVIRONMENT }}" >> $GITHUB_ENV
+          echo "STACK_NAME=${{ vars.STACK_NAME }}" >> $GITHUB_ENV
+          echo "DB_HOST=${{ vars.DB_HOST }}" >> $GITHUB_ENV
+          echo "DB_PORT=${{ vars.DB_PORT }}" >> $GITHUB_ENV
+          echo "DB_DBNAME=${{ vars.DB_DBNAME }}" >> $GITHUB_ENV
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
       - run: sam build --use-container
       - run: |
           sam deploy \
             --stack-name ${{ env.STACK_NAME }} \
             --no-confirm-changeset \
-            --no-execute-changeset \
             --no-fail-on-empty-changeset \
             --resolve-s3 \
             --parameter-overrides \

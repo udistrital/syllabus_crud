@@ -34,7 +34,7 @@ Resources:
     Properties:
       CodeUri: src/handlers/crud_syllabus/
       Handler: app.lambda_handler
-      Runtime: python3.10
+      Runtime: python3.11
       VpcConfig:
         SecurityGroupIds:
           - sg-0ebc920d35b5e46a3
@@ -85,6 +85,7 @@ Resources:
     Properties:
       CodeUri: src/handlers/gofpdf_syllabus/
       Handler: gofpdf_syllabus
+      MemorySize: 160
       Runtime: go1.x
       Architectures:
         - x86_64
