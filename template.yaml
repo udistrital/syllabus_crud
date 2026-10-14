@@ -74,6 +74,18 @@ Resources:
             Path: /syllabus/{id}
             Method: put
 
+        PutSyllabusEstado:
+          Type: Api
+          Properties:
+            Path: /syllabus/{id}/estado
+            Method: put
+
+        PutSyllabusPublicar:
+          Type: Api
+          Properties:
+            Path: /syllabus/{id}/publicar
+            Method: put
+
         DeleteSyllabus:
           Type: Api
           Properties:
