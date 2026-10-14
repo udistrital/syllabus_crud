@@ -50,9 +50,29 @@ El syllabus incorpora un flujo de aprobación modelado sobre el mismo documento
 (colección `syllabus`), agrupado por `syllabus_code`:
 
 * `estado`: `activo | asignado | en_revision | rechazado | expirado | cancelado`.
-```shell
-# En Proceso
-```
+  Los estados distintos de `activo` corresponden a propuestas no publicadas y no
+  se devuelven en las consultas por defecto.
+* `flujo`: metadata de la asignación (`asignado_a`, `asignado_a_documento`,
+  `asignado_por`, `asignado_por_documento`, `fecha_limite`, `historial`, ...).
+
+Endpoints del flujo:
+
+| Método | Ruta | Descripción |
+| -- | -- | -- |
+| PUT | `/syllabus/{id}/estado` | Aplica una transición de estado validada |
+| PUT | `/syllabus/{id}/publicar` | Publica (aprueba) la propuesta como versión actual |
+
+Un borrador (creado con `estado` distinto de `activo`) no despublica la versión
+vigente; solo `/publicar` intercambia la versión actual.
+
+`PUT /syllabus/{id}` es una **actualización parcial**: solo modifica los campos
+enviados. Los campos de flujo/versionado (`syllabus_code`, `version`,
+`syllabus_actual`, `estado`, `flujo`, `creado_por`) son inmutables y se
+descartan aunque vengan en el cuerpo.
+
+Los documentos previos al flujo no tienen el campo `estado`; se tratan como
+`activo` (retrocompatible) y adquieren su `estado` a medida que se editan o
+publican.
 
 ### Despliegue
 ```shell
