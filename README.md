@@ -37,7 +37,19 @@ sam local start-api --env-vars env.json
 
 ### Ejecución Pruebas
 
-Pruebas unitarias
+Pruebas unitarias de la máquina de estados del flujo de aprobación (pytest):
+
+```shell
+pip install -r tests/requirements.txt
+pytest tests/
+```
+
+### Flujo de aprobación
+
+El syllabus incorpora un flujo de aprobación modelado sobre el mismo documento
+(colección `syllabus`), agrupado por `syllabus_code`:
+
+* `estado`: `activo | asignado | en_revision | rechazado | expirado | cancelado`.
 ```shell
 # En Proceso
 ```
