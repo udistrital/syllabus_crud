@@ -305,5 +305,41 @@ def test_publicar_registra_acta_revisor_y_fechas():
     assert seguimiento["fechaAprobacionConsejo"]
 
 
+def test_reasignacion_conserva_contenido_y_propone_nuevo_docente():
+    collection = _FakeCollection()
+    code = uuid.uuid4()
+    _crear_activo(collection, code)
+    draft = _body(_crear_borrador(collection, code))["Data"]
+    draft_id = draft["_id"]
+
+    # El primer docente avanza contenido
+    app.update_syllabus(draft_id, {"justificacion": "avance del docente 1"}, collection)
+
+    # El coordinador reasigna a otro docente con plazo nuevo
+    reasignado = _body(app.update_syllabus_estado(draft_id, {
+        "estado": app.ESTADO_ASIGNADO,
+        "asignado_a": 2000,
+        "asignado_a_documento": "51999888",
+        "fecha_limite": "2027-02-01",
+        "tercero_id": 88,
+        "observacion": "Reasignación de docente",
+    }, collection))["Data"]
+
+    assert reasignado["_id"] == draft_id
+    assert reasignado["estado"] == app.ESTADO_ASIGNADO
+    assert reasignado["justificacion"] == "avance del docente 1"
+    assert reasignado["flujo"]["asignado_a"] == 2000
+    assert reasignado["flujo"]["asignado_a_documento"] == "51999888"
+    assert reasignado["flujo"]["fecha_limite"] == "2027-02-01"
+
+    # El nuevo docente puede proponer sobre el contenido heredado
+    propuesto = _body(app.update_syllabus_estado(
+        draft_id, {"estado": app.ESTADO_EN_REVISION, "tercero_id": 2000}, collection))["Data"]
+    assert propuesto["estado"] == app.ESTADO_EN_REVISION
+    assert propuesto["justificacion"] == "avance del docente 1"
+    # No se creó una versión nueva: sigue habiendo activo + un solo borrador
+    assert len(collection.docs) == 2
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-v"]))
