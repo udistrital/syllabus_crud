@@ -203,16 +203,21 @@ def test_ciclo_completo_aprobacion():
     assert blocked["Success"] is False
 
     # El coordinador rechaza y reabre con nuevo plazo
-    assert _body(app.update_syllabus_estado(
+    rechazado = _body(app.update_syllabus_estado(
         draft_id,
         {"estado": app.ESTADO_RECHAZADO, "motivo_rechazo": "Faltan datos", "tercero_id": 88},
-        collection))["Data"]["estado"] == app.ESTADO_RECHAZADO
+        collection))["Data"]
+    assert rechazado["estado"] == app.ESTADO_RECHAZADO
+    assert rechazado["flujo"]["fecha_ultima_decision"]
+    assert rechazado["flujo"]["ultima_decision_por"] == 88
     reopened = _body(app.update_syllabus_estado(
         draft_id,
         {"estado": app.ESTADO_ASIGNADO, "fecha_limite": "2027-01-15", "tercero_id": 88},
         collection))["Data"]
     assert reopened["estado"] == app.ESTADO_ASIGNADO
     assert reopened["flujo"]["fecha_limite"] == "2027-01-15"
+    # Al reabrir se limpia el snapshot de la última decisión
+    assert reopened["flujo"]["fecha_ultima_decision"] is None
 
     # Propone de nuevo y se publica
     app.update_syllabus_estado(draft_id, {"estado": app.ESTADO_EN_REVISION, "tercero_id": 99}, collection)
@@ -222,6 +227,8 @@ def test_ciclo_completo_aprobacion():
     assert published["estado"] == app.ESTADO_ACTIVO
     assert published["syllabus_actual"] is True
     assert published["seguimiento"]["aprobo"] == "Coordinador X"
+    assert published["flujo"]["fecha_ultima_decision"]
+    assert published["flujo"]["ultima_decision_por"] == 88
 
     # Solo una versión activa por código
     activos = [d for d in collection.docs if d["syllabus_actual"] is True]

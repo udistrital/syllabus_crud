@@ -188,8 +188,10 @@ class Flujo(BaseModel):
     fecha_asignacion: Optional[str] = None
     fecha_limite: Optional[str] = None
     fecha_envio: Optional[str] = None
-    fecha_resolucion: Optional[str] = None
-    resuelto_por: Optional[int] = None
+    # Snapshot de la última decisión del coordinador (rechazo, cancelación o
+    # publicación). El detalle por evento vive en `historial`.
+    fecha_ultima_decision: Optional[str] = None
+    ultima_decision_por: Optional[int] = None
     motivo_rechazo: Optional[str] = None
     historial: Optional[List[HistorialEstado]] = []
 
@@ -985,15 +987,15 @@ def update_syllabus_estado(syllabus_id, payload: dict, syllabus_collection):
             flujo["fecha_envio"] = now_iso
         elif destino == ESTADO_RECHAZADO:
             flujo["motivo_rechazo"] = payload.get("motivo_rechazo")
-            flujo["fecha_resolucion"] = now_iso
-            flujo["resuelto_por"] = payload.get("tercero_id")
+            flujo["fecha_ultima_decision"] = now_iso
+            flujo["ultima_decision_por"] = payload.get("tercero_id")
         elif destino == ESTADO_CANCELADO:
-            flujo["fecha_resolucion"] = now_iso
-            flujo["resuelto_por"] = payload.get("tercero_id")
+            flujo["fecha_ultima_decision"] = now_iso
+            flujo["ultima_decision_por"] = payload.get("tercero_id")
         elif destino == ESTADO_ASIGNADO and origen in (ESTADO_RECHAZADO, ESTADO_EXPIRADO):
             # Reapertura / renovación de plazo tras un rechazo o vencimiento
             flujo["motivo_rechazo"] = None
-            flujo["fecha_resolucion"] = None
+            flujo["fecha_ultima_decision"] = None
             flujo["fecha_asignacion"] = now_iso
 
         flujo.setdefault("historial", [])
@@ -1071,8 +1073,8 @@ def publicar_syllabus(syllabus_id, payload: dict, syllabus_collection):
                 {"$set": {"syllabus_actual": False}})
 
         flujo = current.get("flujo") or {}
-        flujo["fecha_resolucion"] = now_iso
-        flujo["resuelto_por"] = payload.get("tercero_id")
+        flujo["fecha_ultima_decision"] = now_iso
+        flujo["ultima_decision_por"] = payload.get("tercero_id")
         flujo.setdefault("historial", [])
         flujo["historial"].append(build_historial_entry(
             ESTADO_ACTIVO,
