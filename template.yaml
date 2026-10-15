@@ -108,21 +108,6 @@ Resources:
             Path: /v2/syllabus/template
             Method: post
 
-  PostSyllabusXLSXFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/handlers/spreadsheet_syllabus/
-      Handler: spreadsheet_syllabus
-      Runtime: go1.x
-      Architectures:
-        - x86_64
-      Events:
-        GetSyllabusXLSX:
-          Type: Api
-          Properties:
-            Path: /syllabus/template/spreadsheet
-            Method: post
-
   HealthFunction:
     Type: AWS::Serverless::Function
     Properties:
