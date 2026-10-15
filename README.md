@@ -74,6 +74,13 @@ Los documentos previos al flujo no tienen el campo `estado`; se tratan como
 `activo` (retrocompatible) y adquieren su `estado` a medida que se editan o
 publican.
 
+### Manejo de fechas
+
+* El CRUD almacena los snapshots del flujo (`fecha_asignacion`,
+  `flujo.*`) en ISO 8601 con offset Bogotá (`-05:00`, vía `TIMEZONE`) y los
+  datetimes BSON (`fecha_creacion`) en UTC (Mongo).
+* La conversión a la fecha visible es responsabilidad del consumidor.
+
 ### Despliegue
 ```shell
 sam build
