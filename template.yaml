@@ -74,6 +74,18 @@ Resources:
             Path: /syllabus/{id}
             Method: put
 
+        PutSyllabusEstado:
+          Type: Api
+          Properties:
+            Path: /syllabus/{id}/estado
+            Method: put
+
+        PutSyllabusPublicar:
+          Type: Api
+          Properties:
+            Path: /syllabus/{id}/publicar
+            Method: put
+
         DeleteSyllabus:
           Type: Api
           Properties:
@@ -94,21 +106,6 @@ Resources:
           Type: Api
           Properties:
             Path: /v2/syllabus/template
-            Method: post
-
-  PostSyllabusXLSXFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/handlers/spreadsheet_syllabus/
-      Handler: spreadsheet_syllabus
-      Runtime: go1.x
-      Architectures:
-        - x86_64
-      Events:
-        GetSyllabusXLSX:
-          Type: Api
-          Properties:
-            Path: /syllabus/template/spreadsheet
             Method: post
 
   HealthFunction:
