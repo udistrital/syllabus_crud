@@ -190,3 +190,40 @@ def test_watermark_and_inst_headlines_rendered():
     assert "FORMATO DE SYLLABUS" in rendered
     assert "IDENTIFICACIÓN INSTITUCIONAL" in rendered
     assert "Borrador".upper() in rendered
+
+
+def test_thematic_label_hidden_without_detail():
+    rendered = app.render_html(app.TEMPLATE_STR, {
+        "contenido_tematico_descripcion": "<p>Descripcion enriquecida</p>",
+        "contenido_tematico_detalle": [],
+    })
+    assert "Temas y subtemas:" not in rendered
+    assert "Descripcion enriquecida" in rendered
+
+
+def test_thematic_label_visible_with_detail():
+    rendered = app.render_html(app.TEMPLATE_STR, {
+        "contenido_tematico_detalle": [
+            {"nombre": "Limites", "subtemas": ["Laterales"]},
+        ],
+    })
+    assert "Temas y subtemas:" in rendered
+    assert "Limites" in rendered
+    assert "Laterales" in rendered
+
+
+def test_thematic_detail_non_list_is_ignored():
+    rendered = app.render_html(
+        app.TEMPLATE_STR, {"contenido_tematico_detalle": "no-es-lista-xyz"})
+    assert "Temas y subtemas:" not in rendered
+    assert "no-es-lista-xyz" not in rendered
+
+
+def test_empty_thematic_detail_renders_pdf():
+    response = app.lambda_handler(_event({
+        "contenido_tematico_descripcion": "Solo descripcion",
+        "contenido_tematico_detalle": [],
+    }), None)
+    assert response["statusCode"] == 200
+    body = _response_body(response)
+    assert base64.b64decode(body["Data"]).startswith(b"%PDF-")

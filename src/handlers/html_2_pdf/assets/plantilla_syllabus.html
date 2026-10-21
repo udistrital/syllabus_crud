@@ -193,9 +193,12 @@
   <tr class="fila-6mm"><td class="titulo">Contenidos temáticos</td></tr>
   <tr class="fila-6mm"><td class="subtitulo-blanco">Descripción:</td></tr>
   <tr><td class="texto">{{ contenido_tematico_descripcion }}</td></tr>
+  {% if contenido_tematico_items %}
   <tr class="fila-6mm"><td class="subtitulo-blanco">Temas y subtemas:</td></tr>
-  <tr><td class="texto">{% for t in contenido_tematico_detalle or [] %} • {{ t.get('nombre') if t is mapping else t }}<br>{% if t is mapping and t.get('subtemas') %}{% for s in t.get('subtemas') %} - {{ s }}<br>{% endfor %}{% endif %}{% endfor %}</td></tr>
-  <tr class="espaciador-3mm"><td></td></tr>
+  <tr><td class="texto">{% for t in contenido_tematico_items %} • {{ t.get('nombre') if t is mapping else t }}<br>{% if t is mapping and t.get('subtemas') %}{% for s in t.get('subtemas') %} - {{ s }}<br>{% endfor %}{% endif %}{% endfor %}</td></tr>
+  {% else %}
+  <tr class="fila-6mm"><td></td></tr>
+  {% endif %}
 </table>
 
 <table>

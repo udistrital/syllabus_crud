@@ -159,6 +159,10 @@ def render_html(template_str: str, data: dict):
     propositos = data.get("propositos")
     context.setdefault("pfa_mode", resolve_pfa_mode(propositos))
     context.setdefault("competencia_grupos", build_competencia_groups(propositos))
+    detalle = data.get("contenido_tematico_detalle")
+    context.setdefault(
+        "contenido_tematico_items", detalle if isinstance(detalle, list) else []
+    )
     template = Template(template_str)
     html_result = template.render(**context)
     return html_result
