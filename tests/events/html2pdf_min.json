@@ -1,0 +1,6 @@
+{
+  "resource": "/v3/syllabus/template",
+  "path": "/v3/syllabus/template",
+  "httpMethod": "POST",
+  "body": "{}"
+}
