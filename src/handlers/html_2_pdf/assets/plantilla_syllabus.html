@@ -42,7 +42,7 @@
   .html-usuario table { margin: 1mm 0; }
   .html-usuario th, .html-usuario td { border: 0.2mm solid #000; padding: 0.4mm 1mm; text-align: left; vertical-align: top; }
   .html-usuario img { max-width: 100%; }
-  .html-usuario ul, .html-usuario ol { padding-left: 20px; }
+  .html-usuario ul, .html-usuario ol { padding-left: 8mm; margin: 1mm 0; }
   .marca-agua { position: fixed; left: 0; top: 33%; width: 100%; text-align: center; }
   .marca-agua span { display: inline-block; transform: rotate(45deg); font-size: 72pt; font-weight: bold; color: rgba(80, 80, 80, 0.12); }
 </style>
@@ -118,7 +118,7 @@
 
 <table>
   <tr class="fila-6mm"><td class="titulo">Justificación del espacio académico</td></tr>
-  <tr><td class="texto html-usuario">{{ justificacion | safe }}</td></tr>
+  <tr><td class="texto">{{ justificacion | safe }}</td></tr>
 </table>
 
 <table>
@@ -192,7 +192,7 @@
 <table>
   <tr class="fila-6mm"><td class="titulo">Contenidos temáticos</td></tr>
   <tr class="fila-6mm"><td class="subtitulo-blanco">Descripción:</td></tr>
-  <tr><td class="texto">{{ contenido_tematico_descripcion }}</td></tr>
+  <tr><td class="texto html-usuario">{{ contenido_tematico_descripcion }}</td></tr>
   {% if contenido_tematico_items %}
   <tr class="fila-6mm"><td class="subtitulo-blanco">Temas y subtemas:</td></tr>
   <tr><td class="texto">{% for t in contenido_tematico_items %} • {{ t.get('nombre') if t is mapping else t }}<br>{% if t is mapping and t.get('subtemas') %}{% for s in t.get('subtemas') %} - {{ s }}<br>{% endfor %}{% endif %}{% endfor %}</td></tr>
