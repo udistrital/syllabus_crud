@@ -192,6 +192,21 @@
 <table>
   <tr class="fila-6mm"><td class="titulo">Contenidos temáticos</td></tr>
   <tr class="fila-6mm"><td class="subtitulo-blanco">Descripción:</td></tr>
+  {% if contenido_tematico_imagen_error %}
+  <tr>
+    <td class="texto">
+      <div style="border: 0.4mm solid #b00020; color: #b00020; padding: 2mm; margin: 2mm 0; font-weight: bold; text-align: center;">
+        Imagen del contenido temático no disponible. Vuelva a generar el documento.
+      </div>
+    </td>
+  </tr>
+  {% elif contenido_tematico_imagen %}
+  <tr>
+    <td class="texto html-usuario" style="text-align: center;">
+      <img src="{{ contenido_tematico_imagen }}" style="max-width: 100%;" alt="Imagen del contenido temático">
+    </td>
+  </tr>
+  {% else %}
   <tr><td class="texto html-usuario">{{ contenido_tematico_descripcion }}</td></tr>
   {% if contenido_tematico_items %}
   <tr class="fila-6mm"><td class="subtitulo-blanco">Temas y subtemas:</td></tr>

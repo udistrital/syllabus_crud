@@ -47,6 +47,7 @@ ALLOWED_STYLE_PROPERTIES = frozenset({
 
 DATA_IMAGE_RE = re.compile(r"data:image/[\w.+-]+;base64,([A-Za-z0-9+/=]+)")
 DATA_URI_RE = re.compile(r"data:[\w./+-]*;base64,[A-Za-z0-9+/=]+")
+IMAGE_DATA_URI_RE = re.compile(r"^data:image/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$")
 
 
 DATA_URL_FETCHER = URLFetcher(allowed_protocols={"data"})
@@ -74,14 +75,28 @@ def sanitize_html(value: str) -> str:
     )
 
 
+def is_renderable_image_data_uri(value) -> bool:
+    """True si es una imagen data URI del tipo permitido y dentro del limite."""
+    if not isinstance(value, str) or not IMAGE_DATA_URI_RE.match(value):
+        return False
+    payload = value.rsplit(",", 1)[1]
+    return len(payload) * 3 // 4 <= MAX_IMAGE_BYTES
+
+
 def sanitize_payload(obj):
     if isinstance(obj, str):
         return sanitize_html(obj)
     if isinstance(obj, dict):
-        return {
-            key: (value if key == "template_str" else sanitize_payload(value))
-            for key, value in obj.items()
-        }
+        sanitized = {}
+        for key, value in obj.items():
+            if key == "template_str":
+                sanitized[key] = value
+            elif key == "contenido_tematico_imagen" and is_renderable_image_data_uri(value):
+                # El base64 no es HTML: evita que nh3 lo parsee en cada invocacion.
+                sanitized[key] = value
+            else:
+                sanitized[key] = sanitize_payload(value)
+        return sanitized
     if isinstance(obj, list):
         return [sanitize_payload(item) for item in obj]
     return obj
