@@ -19,8 +19,7 @@ cat > "$STAGE/inner.sh" <<'INNER_EOF'
 set -euo pipefail
 dnf -y install \
     pango cairo gdk-pixbuf2 fontconfig harfbuzz freetype \
-    liberation-sans-fonts liberation-serif-fonts \
-    dejavu-sans-fonts dejavu-serif-fonts dejavu-sans-mono-fonts \
+    liberation-sans-fonts dejavu-sans-fonts \
     >/dev/null
 
 mkdir -p /stage/lib /stage/fonts
@@ -71,7 +70,7 @@ for vdir in /usr/lib64/gdk-pixbuf-2.0/*/; do
         > "/stage/lib/gdk-pixbuf-2.0/$vname/loaders.cache"
 done
 
-cp -a /usr/share/fonts/. /stage/fonts/
+cp -a /usr/share/fonts/liberation-sans /usr/share/fonts/dejavu-sans-fonts /stage/fonts/
 
 cat > /stage/fonts/fonts.conf <<'XML'
 <?xml version="1.0"?>

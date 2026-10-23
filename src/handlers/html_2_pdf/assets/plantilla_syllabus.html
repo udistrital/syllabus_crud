@@ -9,7 +9,7 @@
     margin: 8mm 8mm 20mm 8mm;
     @bottom-center {
       content: "Estimada y estimado estudiante, si usted es una persona con discapacidad o cree que podría tener un problema dificultad o necesidad de aprendizaje y que requiere apoyos para cursar esta asignatura, por favor ponerse en contacto con el Centro Acacia al correo: cadep.acacia@udistrital.edu.co, o al teléfono: 601 3239300 Extensión 6213";
-      font-family: "Liberation Sans", Helvetica, Arial, sans-serif;
+      font-family: "Liberation Sans", "DejaVu Sans", sans-serif;
       font-size: 7pt;
       font-style: italic;
       text-align: center;
@@ -17,9 +17,9 @@
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: "Liberation Sans", Helvetica, Arial, sans-serif; font-size: 9pt; color: #000; }
+  body { font-family: "Liberation Sans", "DejaVu Sans", sans-serif; font-size: 9pt; color: #000; }
   table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  td, th { border: 0.2mm solid #000; padding: 0.4mm 0.5mm; vertical-align: middle; }
+  td, th { border: 0.2mm solid #383838; padding: 0.4mm 0.5mm; vertical-align: middle; }
   .titulo { background-color: #c9c9c9; font-weight: bold; text-align: center; height: 6mm; }
   .subtitulo { background-color: #c9c9c9; font-weight: bold; height: 6mm; }
   .subtitulo-blanco { font-weight: bold; }
@@ -68,7 +68,6 @@
     <td style="width:30%"><img src="{{ assets.logo_sigud }}" style="width:38mm;max-height:40mm"></td>
   </tr>
 </table>
-{% if marca_agua %}<div class="marca-agua"><span>{{ marca_agua }}</span></div>{% endif %}
 
 <table>
   <colgroup>{% for _ in range(10) %}<col style="width:10%">{% endfor %}</colgroup>
@@ -141,7 +140,7 @@
   {% for p in propositos %}
   {% if p is mapping %}
   <tr class="fila-6mm"><td class="etiqueta">  PROPÓSITO {{ loop.index }}</td></tr>
-  <tr class="fila-6mm"><td class="etiqueta">PFA del Programa/Proyecto</td></tr>
+  <!-- <tr class="fila-6mm"><td class="etiqueta">PFA del Programa/Proyecto</td></tr> -->
   <tr><td class="texto">{{ p.get('pfa_programa') }}</td></tr>
   {% if p.get('pfa_asignatura') %}
   <tr class="fila-6mm"><td class="etiqueta">PFA de la Asignatura</td></tr>
@@ -151,7 +150,7 @@
   <tr class="fila-6mm"><td class="etiqueta">Competencias</td></tr>
   <tr><td class="texto">{{ p.get('competencias') }}</td></tr>
   {% endif %}
-  <tr class="fila-6mm"><td></td></tr>
+  <tr class="espaciador-2mm"><td></td></tr>
   {% endif %}
   {% endfor %}
 </table>
@@ -214,6 +213,7 @@
   {% else %}
   <tr class="fila-6mm"><td></td></tr>
   {% endif %}
+  {% endif %}
 </table>
 
 <table>
@@ -224,7 +224,14 @@
   <tr class="fila-6mm"><td class="subtitulo-blanco"> Descripción: </td></tr>
   <tr><td class="texto">{{ evaluacion_descripcion }}</td></tr>
   <tr class="fila-6mm"><td class="subtitulo-blanco">Evaluaciones: </td></tr>
-  <tr><td class="texto">{% for e in evaluacion_detalle %}{% if e is mapping %} - Nombre: {{ e.get('nombre') }}<br>&nbsp;&nbsp;&nbsp;· Porcentaje: {{ e.get('porcentaje') }}<br>{% if e.get('momento') %}&nbsp;&nbsp;&nbsp;· Momento: {{ e.get('momento') }}<br>{% endif %}{% if e.get('estrategia') %}&nbsp;&nbsp;&nbsp;· Estrategia: {{ e.get('estrategia') }}<br>{% endif %}{% if not loop.last %}<br>{% endif %}{% endif %}{% endfor %}</td></tr>
+  <tr><td class="texto">{% for e in evaluacion_detalle %}
+    {% if e is mapping %} 
+      {{ e.get('nombre') }}: {{ e.get('porcentaje') }} % <br>
+      {% if e.get('momento') %}&nbsp;&nbsp;&nbsp;· Momento: {{ e.get('momento') }}<br>{% endif %}
+      {% if e.get('estrategia') %}&nbsp;&nbsp;&nbsp;· Estrategia: {{ e.get('estrategia') }}<br>{% endif %}
+      <!-- {% if not loop.last %}<br>{% endif %} -->
+    {% endif %}
+  {% endfor %}</td></tr>
   <tr class="espaciador-2mm"><td></td></tr>
   {% endif %}
 </table>
@@ -255,5 +262,6 @@
   <tr class="fila-6mm"><td class="etiqueta">Aprobó</td><td colspan="4" class="centrado">{{ aprobo }}</td><td class="etiqueta">Fecha</td><td colspan="4" class="centrado">{{ fecha_aprob_consejo }}</td></tr>
   <tr class="fila-6mm"><td colspan="2" class="etiqueta">Número de acta:</td><td colspan="4" class="centrado">{{ num_acta }}</td><td colspan="2" class="etiqueta">Versión Syllabus:</td><td colspan="2" class="centrado">{{ version_syllabus }}</td></tr>
 </table>
+{% if marca_agua %}<div class="marca-agua"><span>{{ marca_agua }}</span></div>{% endif %}
 </body>
 </html>
