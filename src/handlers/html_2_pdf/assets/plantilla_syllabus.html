@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Formato Syllabus</title>
+<style>
+  @page {
+    size: Letter;
+    margin: 8mm 8mm 20mm 8mm;
+    @bottom-center {
+      content: "Estimada y estimado estudiante, si usted es una persona con discapacidad o cree que podría tener un problema dificultad o necesidad de aprendizaje y que requiere apoyos para cursar esta asignatura, por favor ponerse en contacto con el Centro Acacia al correo: cadep.acacia@udistrital.edu.co, o al teléfono: 601 3239300 Extensión 6213";
+      font-family: "Liberation Sans", "DejaVu Sans", sans-serif;
+      font-size: 7pt;
+      font-style: italic;
+      text-align: center;
+      vertical-align: top;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Liberation Sans", "DejaVu Sans", sans-serif; font-size: 9pt; color: #000; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  td, th { border: 0.2mm solid #383838; padding: 0.4mm 0.5mm; vertical-align: middle; }
+  .titulo { background-color: #c9c9c9; font-weight: bold; text-align: center; height: 6mm; }
+  .subtitulo { background-color: #c9c9c9; font-weight: bold; height: 6mm; }
+  .subtitulo-blanco { font-weight: bold; }
+  .etiqueta { font-weight: bold; }
+  .centrado { text-align: center; }
+  .fila-6mm { height: 6mm; }
+  .fila-9mm { height: 9mm; }
+  .espaciador-3mm { height: 3mm; }
+  .espaciador-2mm { height: 2mm; }
+  .texto { line-height: 4.5mm; text-align: justify; padding: 0.4mm 1mm; }
+  .cabecera { border: 0.2mm solid #000; }
+  .cabecera td { border: none; height: 40mm; text-align: center; vertical-align: middle; padding: 0; }
+  .cabecera .cabecera-texto, .cabecera .cabecera-codigo { border-left: 0.2mm solid #000; }
+  .cabecera .cabecera-codigo { border-right: 0.2mm solid #000; }
+  .cabecera table { border-collapse: collapse; height: 40mm; }
+  .cabecera table td { border: none; border-bottom: 0.2mm solid #000; text-align: center; vertical-align: middle; height: 10mm; padding: 0.4mm 1mm; }
+  .cabecera table tr.cabecera-fila-alta td { height: 20mm; border-bottom: none; }
+  .tabla-competencias th { font-size: 8pt; background-color: #c9c9c9; height: 8mm; }
+  .tabla-competencias td { font-size: 7pt; }
+  .html-usuario table { margin: 1mm 0; }
+  .html-usuario th, .html-usuario td { border: 0.2mm solid #000; padding: 0.4mm 1mm; text-align: left; vertical-align: top; }
+  .html-usuario img { max-width: 100%; }
+  .html-usuario ul, .html-usuario ol { padding-left: 8mm; margin: 1mm 0; }
+  .marca-agua { position: fixed; left: 0; top: 33%; width: 100%; text-align: center; }
+  .marca-agua span { display: inline-block; transform: rotate(45deg); font-size: 72pt; font-weight: bold; color: rgba(80, 80, 80, 0.12); }
+</style>
+</head>
+<body>
+<table class="cabecera">
+  <tr>
+    <td style="width:20%"><img src="{{ assets.logo_left }}" style="height:35mm"></td>
+    <td class="cabecera-texto" style="width:30%">
+      <table>
+        <tr><td><strong>FORMATO DE SYLLABUS</strong></td></tr>
+        <tr><td>Macroproceso: Direccionamiento Estratégico</td></tr>
+        <tr class="cabecera-fila-alta"><td>Proceso: Currículo y Calidad</td></tr>
+      </table>
+    </td>
+    <td class="cabecera-codigo" style="width:20%">
+      <table>
+        <tr><td>Código: CC-FR-003</td></tr>
+        <tr><td>Versión: 02</td></tr>
+        <tr class="cabecera-fila-alta"><td>Fecha de Aprobación: XX-XX-2026</td></tr>
+      </table>
+    </td>
+    <td style="width:30%"><img src="{{ assets.logo_sigud }}" style="width:38mm;max-height:40mm"></td>
+  </tr>
+</table>
+
+<table>
+  <colgroup>{% for _ in range(10) %}<col style="width:10%">{% endfor %}</colgroup>
+  <tr class="fila-6mm"><td colspan="10" class="titulo">IDENTIFICACIÓN INSTITUCIONAL</td></tr>
+  <tr class="fila-6mm"><td colspan="2" class="etiqueta">Facultad</td><td colspan="8">{{ nombre_facultad }}</td></tr>
+  <tr class="fila-6mm"><td colspan="2" class="etiqueta">Área de formación</td><td colspan="8">{{ area_formacion }}</td></tr>
+  <tr class="fila-6mm"><td colspan="2" class="etiqueta">Programa Académico</td><td colspan="5">{{ nombre_proyecto_curricular }}</td><td colspan="2" class="etiqueta">Código plan de estudio</td><td class="centrado">{{ cod_plan_estudio }}</td></tr>
+  <tr class="espaciador-3mm"><td colspan="10"></td></tr>
+</table>
+
+<table>
+  <colgroup>{% for _ in range(10) %}<col style="width:10%">{% endfor %}</colgroup>
+  <tr class="fila-6mm"><td colspan="10" class="titulo">IDENTIFICACIÓN DEL ESPACIO ACADÉMICO</td></tr>
+  <tr class="fila-9mm">
+    <td colspan="3" class="etiqueta">Nombre del espacio académico</td>
+    <td colspan="3" class="centrado">{{ nombre_espacio_academico }}</td>
+    <td colspan="2" class="etiqueta">Idioma</td>
+    <td colspan="2" class="centrado">{{ idiomas }}</td>
+  </tr>
+  <tr class="fila-6mm">
+    <td colspan="3" class="etiqueta">Código del espacio académico</td>
+    <td class="centrado">{{ cod_espacio_academico }}</td>
+    <td colspan="3" class="etiqueta"> Número de créditos académicos</td>
+    <td class="centrado">{{ num_creditos }}</td>
+    <td class="etiqueta"> Modalidad</td>
+    <td class="centrado">{{ modalidad }}</td>
+  </tr>
+  <tr class="fila-6mm">
+    <td colspan="4" class="etiqueta">Distribución horas de trabajo</td>
+    <td class="centrado">HTD</td><td class="centrado">{{ htd }}</td>
+    <td class="centrado">HTC</td><td class="centrado">{{ htc }}</td>
+    <td class="centrado">HTA</td><td class="centrado">{{ hta }}</td>
+  </tr>
+  <tr class="fila-6mm">
+    <td colspan="3" class="etiqueta">Clasificación del espacio académico</td>
+    <td colspan="2" class="centrado">{{ naturaleza }}</td>
+    <td colspan="3" class="etiqueta"> Carácter del espacio académico</td>
+    <td colspan="2" class="centrado">{{ caracter }}</td>
+  </tr>
+  <tr class="espaciador-3mm"><td colspan="10"></td></tr>
+</table>
+
+<table>
+  <tr class="fila-6mm"><td class="titulo">Saberes y conocimientos previos</td></tr>
+  <tr><td class="texto">{{ sugerencias }}</td></tr>
+</table>
+
+<table>
+  <tr class="fila-6mm"><td class="titulo">Justificación del espacio académico</td></tr>
+  <tr><td class="texto">{{ justificacion | safe }}</td></tr>
+</table>
+
+<table>
+  <tr class="fila-6mm"><td class="titulo">Objetivos del espacio académico</td></tr>
+  <tr class="fila-6mm"><td class="subtitulo-blanco">Objetivo General</td></tr>
+  <tr><td class="texto">{{ objetivo_general }}</td></tr>
+  <tr class="fila-6mm"><td class="subtitulo-blanco">Objetivos Específicos</td></tr>
+  <tr><td class="texto">{% for o in objetivos_especificos or [] %}•{{ o }}<br>{% endfor %}</td></tr>
+  <tr class="espaciador-3mm"><td></td></tr>
+</table>
+
+<table>
+  <tr class="fila-6mm"><td class="titulo">Propósitos de Formación y Aprendizaje (PFA)</td></tr>
+  {% if pfa_mode == 'empty' %}
+  <tr class="fila-6mm"><td class="centrado">No hay propósitos de formación definidos</td></tr>
+  {% endif %}
+</table>
+{% if pfa_mode == 'blocks' %}
+<table>
+  {% for p in propositos %}
+  {% if p is mapping %}
+  <tr class="fila-6mm"><td class="etiqueta">  PROPÓSITO {{ loop.index }}</td></tr>
+  <!-- <tr class="fila-6mm"><td class="etiqueta">PFA del Programa/Proyecto</td></tr> -->
+  <tr><td class="texto">{{ p.get('pfa_programa') }}</td></tr>
+  {% if p.get('pfa_asignatura') %}
+  <tr class="fila-6mm"><td class="etiqueta">PFA de la Asignatura</td></tr>
+  <tr><td class="texto">{{ p.get('pfa_asignatura') }}</td></tr>
+  {% endif %}
+  {% if p.get('competencias') %}
+  <tr class="fila-6mm"><td class="etiqueta">Competencias</td></tr>
+  <tr><td class="texto">{{ p.get('competencias') }}</td></tr>
+  {% endif %}
+  <tr class="espaciador-2mm"><td></td></tr>
+  {% endif %}
+  {% endfor %}
+</table>
+{% elif pfa_mode == 'legacy' %}
+{% set pd = propositos[0]['propositos_formación_legacy'] %}
+<table>
+  {% for i in range(0, pd | length, 3) %}
+  <tr class="fila-6mm"><td class="etiqueta">  PROPÓSITO {{ (i + 3) // 3 }}</td></tr>
+  <tr class="fila-6mm"><td class="etiqueta">PFA del Programa/Proyecto</td></tr>
+  <tr><td class="texto">{{ pd[i] }}</td></tr>
+  <tr class="fila-6mm"><td class="etiqueta">PFA de la Asignatura</td></tr>
+  <tr><td class="texto">{{ pd[i + 1] }}</td></tr>
+  <tr class="fila-6mm"><td class="etiqueta">Competencias</td></tr>
+  <tr><td class="texto">{{ pd[i + 2] }} </td></tr>
+  {% endfor %}
+</table>
+{% elif pfa_mode == 'v3' %}
+<table class="tabla-competencias">
+  <colgroup><col style="width:30%"><col style="width:20%"><col style="width:10%"><col style="width:40%"></colgroup>
+  <thead>
+    <tr><th>Competencias</th><th>Dominio-Nivel</th><th>RA</th><th>Resultados de Aprendizaje</th></tr>
+  </thead>
+  {% for g in competencia_grupos %}
+  <tbody style="break-inside: avoid;">
+    {% for it in g['items'] %}
+    <tr>
+      {% if loop.first %}<td class="etiqueta" rowspan="{{ g['items'] | length }}">{{ g['nombre'] }}</td>{% endif %}
+      <td class="centrado">{{ it.get('dominio') }}</td>
+      <td class="centrado">{{ it.get('id') }}</td>
+      <td>{{ it.get('resultado_detallado') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  {% endfor %}
+</table>
+{% endif %}
+
+<table>
+  <tr class="fila-6mm"><td class="titulo">Contenidos temáticos</td></tr>
+  <tr class="fila-6mm"><td class="subtitulo-blanco">Descripción:</td></tr>
+  {% if contenido_tematico_imagen_error %}
+  <tr>
+    <td class="texto">
+      <div style="border: 0.4mm solid #b00020; color: #b00020; padding: 2mm; margin: 2mm 0; font-weight: bold; text-align: center;">
+        Imagen del contenido temático no disponible. Vuelva a generar el documento.
+      </div>
+    </td>
+  </tr>
+  {% elif contenido_tematico_imagen %}
+  <tr>
+    <td class="texto html-usuario" style="text-align: center;">
+      <img src="{{ contenido_tematico_imagen }}" style="max-width: 100%;" alt="Imagen del contenido temático">
+    </td>
+  </tr>
+  {% else %}
+  <tr><td class="texto html-usuario">{{ contenido_tematico_descripcion }}</td></tr>
+  {% if contenido_tematico_items %}
+  <tr class="fila-6mm"><td class="subtitulo-blanco">Temas y subtemas:</td></tr>
+  <tr><td class="texto">{% for t in contenido_tematico_items %} • {{ t.get('nombre') if t is mapping else t }}<br>{% if t is mapping and t.get('subtemas') %}{% for s in t.get('subtemas') %} - {{ s }}<br>{% endfor %}{% endif %}{% endfor %}</td></tr>
+  {% else %}
+  <tr class="fila-6mm"><td></td></tr>
+  {% endif %}
+  {% endif %}
+</table>
+
+<table>
+  <tr class="fila-6mm"><td class="titulo">Evaluación</td></tr>
+  {% if not evaluacion_detalle %}
+  <tr class="fila-6mm"><td class="centrado">No hay detalles de evaluación definidos</td></tr>
+  {% else %}
+  <tr class="fila-6mm"><td class="subtitulo-blanco"> Descripción: </td></tr>
+  <tr><td class="texto">{{ evaluacion_descripcion }}</td></tr>
+  <tr class="fila-6mm"><td class="subtitulo-blanco">Evaluaciones: </td></tr>
+  <tr><td class="texto">{% for e in evaluacion_detalle %}
+    {% if e is mapping %} 
+      {{ e.get('nombre') }}: {{ e.get('porcentaje') }} % <br>
+      {% if e.get('momento') %}&nbsp;&nbsp;&nbsp;· Momento: {{ e.get('momento') }}<br>{% endif %}
+      {% if e.get('estrategia') %}&nbsp;&nbsp;&nbsp;· Estrategia: {{ e.get('estrategia') }}<br>{% endif %}
+      <!-- {% if not loop.last %}<br>{% endif %} -->
+    {% endif %}
+  {% endfor %}</td></tr>
+  <tr class="espaciador-2mm"><td></td></tr>
+  {% endif %}
+</table>
+
+<table>
+  <tr class="fila-6mm"><td class="titulo">Medios y recursos educativos</td></tr>
+  <tr><td class="texto">{{ medios_recursos }}</td></tr>
+</table>
+
+<table>
+  <tr class="fila-6mm"><td class="titulo">Prácticas académicas</td></tr>
+  <tr><td class="texto">{{ practicas_salidas }}</td></tr>
+</table>
+
+<table>
+  <tr class="fila-6mm"><td class="titulo">Fuentes o referentes</td></tr>
+  {% for titulo, lista in [('Básicas', bibliografia_basica or []), ('Complementarias', bibliografia_complementaria or []), ('Bases de Datos', bibliografia_bases or []), ('Páginas web', bibliografia_paginas or [])] %}
+  <tr class="fila-6mm"><td class="subtitulo-blanco">{{ titulo }}</td></tr>
+  <tr><td class="texto">{% for item in lista %}- {{ item }}<br>{% endfor %}</td></tr>
+  {% endfor %}
+</table>
+
+<table>
+  <colgroup>{% for _ in range(10) %}<col style="width:10%">{% endfor %}</colgroup>
+  <tr class="fila-6mm"><td colspan="10" class="titulo">Seguimiento</td></tr>
+  <tr class="fila-6mm"><td class="etiqueta">Elaboró</td><td colspan="4" class="centrado">{{ elaboro }}</td><td class="etiqueta">Fecha</td><td colspan="4" class="centrado">{{ fecha_elaboro }}</td></tr>
+  <tr class="fila-6mm"><td class="etiqueta">Revisó</td><td colspan="4" class="centrado">{{ reviso }}</td><td class="etiqueta">Fecha</td><td colspan="4" class="centrado">{{ fecha_rev_consejo }}</td></tr>
+  <tr class="fila-6mm"><td class="etiqueta">Aprobó</td><td colspan="4" class="centrado">{{ aprobo }}</td><td class="etiqueta">Fecha</td><td colspan="4" class="centrado">{{ fecha_aprob_consejo }}</td></tr>
+  <tr class="fila-6mm"><td colspan="2" class="etiqueta">Número de acta:</td><td colspan="4" class="centrado">{{ num_acta }}</td><td colspan="2" class="etiqueta">Versión Syllabus:</td><td colspan="2" class="centrado">{{ version_syllabus }}</td></tr>
+</table>
+{% if marca_agua %}<div class="marca-agua"><span>{{ marca_agua }}</span></div>{% endif %}
+</body>
+</html>

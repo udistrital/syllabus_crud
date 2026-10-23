@@ -1,25 +1,185 @@
 import base64
 import json
+import os
+import re
 
+import nh3
 from jinja2 import Template
 from weasyprint import HTML
+from weasyprint.urls import URLFetcher
 
-TEMPLATE_STR = '<!DOCTYPE html>\n<html lang="es">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Formato Syllabus</title>\n    <style>\n        @page {\n            margin: 0.5in 0.3in;\n            size: Letter;\n        }\n\n        * {\n            box-sizing: border-box;\n            font-family: sans-serif;\n            text-align: justify;\n            text-justify: inter-word;\n            margin: 0;\n            padding: 0;\n        }\n\n        table, th, td {\n            border: 2px solid black;\n            word-wrap: break-word;\n            font-size: 12px;\n            padding: 2px 5px;\n        }\n\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            border: 0;\n            border-spacing: 0;\n            text-align: left;\n            table-layout: fixed;\n            margin-top: 0px;\n            margin-bottom: 0px;\n        }\n\n        ul {\n            padding-left: 20px;\n        }\n\n        .bold {\n            font-weight: bold;\n        }\n\n        .center-image {\n            display: block;\n            margin-left: auto;\n            margin-right: auto;\n            width: 100px;\n        }\n\n        .container {\n            width: 100%;\n            max-width: 21cm;\n            margin: 0 auto;\n        }\n\n        .table-header {\n            background-color: #c9c9c9;\n        }\n\n        .text-center {\n            text-align: center !important;\n        }\n\n        .text-justify {\n            text-align: justify !important;\n        }\n\n        .text-padding {\n            padding-top: 5px;\n            padding-bottom: 5px;\n        }\n\n        .text-left {\n            text-align: left !important;\n        }\n\n        .version-doc {\n            font-size: 12px;\n        }\n\n        .without-border-bottom {\n            border-bottom: none !important;\n        }\n\n        .without-border-top {\n            border-top: none !important;\n        }\n    </style>\n</head>\n<body>\n    <div class="container">\n        <table>\n            <tr>\n                <td colspan="2">\n                    <div>\n                        <img src="https://raw.githubusercontent.com/udistrital/prueba_piloto_funciones_lambda/develop/img/escudo_linea_negro.png"\n                        alt="Escudo UD"\n                        class="center-image"\n                        width="8px">\n                    </div>\n                </td>\n                <td class="bold text-center" colspan="8">\n                    <p class="bold text-center">\n                        UNIVERSIDAD DISTRITAL <br>\n                        FRANCISCO JOSÉ DE CALDAS\n                    </p>\n                    <br>\n                    <p class="bold text-center">\n                        SYLLABUS\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold" colspan="2">\n                    <p>FACULTAD:</p>\n                </td>\n                <td colspan="8">\n                    {{ nombre_facultad }}\n                </td>\n            </tr>\n            <tr>\n                <td class="bold" colspan="2">\n                    <p>PROYECTO CURRICULAR:</p>\n                </td>\n                <td colspan="4">\n                    {{ nombre_proyecto_curricular }}\n                </td>\n                <td class="bold text-center" colspan="2">\n                    <p class="text-center">CÓDIGO PLAN DE ESTUDIOS:</p>\n                </td>\n                <td class="text-center" colspan="2">\n                    <p class="text-center">\n                        {{ cod_plan_estudio }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold text-center" colspan="10">\n                    <p class="text-center">I. IDENTIFICACIÓN DEL ESPACIO ACADÉMICO</p>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header" colspan="10">\n                    <p>\n                        NOMBRE DEL ESPACIO ACADÉMICO: {{ nombre_espacio_academico }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td colspan="4">\n                    <p>\n                        Código del espacio académico:\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        {{ cod_espacio_academico }}\n                    </p>\n                </td>\n                <td colspan="3">\n                    <p>\n                        Número de créditos académicos:\n                    </p>\n                </td>\n                <td colspan="2">\n                    <p class="text-center">\n                        {{ num_creditos }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td colspan="4">\n                    <p>\n                        Distribución horas de trabajo:\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        HTD\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        {{ htd }}\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        HTC\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        {{ htc }}\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        HTA\n                    </p>\n                </td>\n                <td colspan="1">\n                    <p class="text-center">\n                        {{ hta }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td colspan="4">\n                    <p>\n                        Tipo de espacio académico (X):\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Asignatura\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_asignatura %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Cátedra\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_catedra %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td colspan="1">\n                </td>\n                <td colspan="1">\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        NATURALEZA DEL ESPACIO ACADÉMICO (X):\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Obligatorio Básico\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_obligatorio_basico %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Obligatorio Complementario\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_obligatorio_comp %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Electivo Intrínseco\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_electivo_int %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Electivo Extrínseco\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_electivo_ext %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Electivo\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_electivo %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        CARÁCTER DEL ESPACIO ACADÉMICO (X):\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-center" colspan="2">\n                    <p class="text-center">\n                        Teórico\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_teorico %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td class="text-center" colspan="2">\n                    <p class="text-center">\n                        Práctico\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_practico %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td class="text-center" colspan="2">\n                    <p class="text-center">\n                        Teórico-Práctico\n                    </p>\n                </td>\n                <td class="text-center" colspan="2">\n                    {% if es_teorico_practico %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        MODALIDAD DE OFERTA DEL ESPACIO ACADÉMICO (X):\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Presencial\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_presencial %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Presencial con incorporación de TIC\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_presencial_tic %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td class="text-center" colspan="1">\n                    <p class="text-center">\n                        Virtual\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if es_virtual %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td colspan="1">\n                    <p>\n                        Otros:\n                    </p>\n                </td>\n                <td class="text-center" colspan="1">\n                    {% if otra_modalidad %}\n                    <p class="text-center">\n                        X\n                    </p>\n                    {% endif %}\n                </td>\n                <td colspan="2">\n                    {% if cual_otra_modalidad %}\n                    <p class="text-justify text-padding">\n                        Cuál: {{ cual_otra_modalidad }}\n                    </p>\n                    {% else %}\n                    <p class="text-justify text-padding">\n                        Cuál:_______\n                    </p>\n                    {% endif %}\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        IDIOMA EN EL QUE SE OFERTA EL ESPACIO ACADÉMICO:\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-center" colspan="3">\n                    <p class="text-center">\n                        Idioma\n                    </p>\n                </td>\n                <td class="text-center" colspan="7">\n                    <p class="text-justify text-padding">\n                        {{ idiomas }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        II. SUGERENCIAS DE SABERES Y CONOCIMIENTOS PREVIOS\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify" colspan="10">\n                    <p class="text-justify text-padding">\n                        {{ sugerencias }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        III. JUSTIFICACIÓN DEL ESPACIO ACADÉMICO\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify" colspan="10">\n                    <p class="text-justify text-padding">\n                        {{ justificacion }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        IV. OBJETIVOS DEL ESPACIO ACADÉMICO (GENERAL Y ESPECÍFICOS)\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-bottom" colspan="10">\n                    <p class="text-justify text-padding bold">\n                        Objetivo General\n                    </p>\n                    <p class="text-justify text-padding">\n                        {{ objetivo_general }}\n                    </p>\n                    <br>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-top" colspan="10">\n                    <p class="text-justify text-padding bold">\n                        Objetivos Específicos\n                    </p>\n                    {% if objetivos_especificos is iterable and (objetivos_especificos is not string and objetivos_especificos is not mapping) %}\n                    <p class="text-justify text-padding">\n                        <ul>\n                            {% for objetivo in objetivos_especificos %}\n                            <li> {{ objetivo }} </li>\n                            {% endfor %}\n                        </ul>\n                    </p>\n                    </p>\n                    {% else %}\n                    <p class="text-justify text-padding">\n                        {{ objetivos_especificos }}\n                    </p>\n                    {% endif %}\n                    <br>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        V. PROPÓSITOS DE FORMACIÓN Y DE APRENDIZAJE (PFA) DEL ESPACIO ACADEMICO\n                    </p>\n                </td>\n            </tr>\n            {% if propositos is string %}\n            <tr>\n                <td class="text-justify" colspan="10">\n                    <p class="text-justify text-padding">\n                        {{ propositos }}\n                    </p>\n                </td>\n            </tr>\n            {% endif %}\n        </table>\n        {% if propositos is iterable and (propositos is not string and propositos is not mapping) %}\n        <table>\n            <thead>\n                <tr>\n                    <th class="text-center" colspan="1">#</th>\n                    <th class="text-center" colspan="3">PFA del programa / proyecto</th>\n                    <th class="text-center" colspan="3">PFA de la asignatura</th>\n                    <th class="text-center" colspan="3">Competencias</th>\n                </tr>\n            </thead>\n            <tbody>\n                {% for proposito in propositos %}\n                <tr>\n                    <td class="text-center" colspan="1"> {{ loop.index }} </td>\n                    <td class="text-justify" colspan="3"> {{ proposito.pfa_programa }} </td>\n                    <td class="text-justify" colspan="3"> {{ proposito.pfa_asignatura }} </td>\n                    <td class="text-justify" colspan="3"> {{ proposito.competencias|default(\' \', true) }} </td>\n                </tr>\n                {% endfor %}\n            </tbody>\n        </table>\n        {% endif %}\n        <table>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        VI. CONTENIDOS TEMÁTICOS\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-bottom" colspan="10">\n                    <p class="text-justify text-padding bold">\n                        Descripción:\n                    </p>\n                    <p class="text-justify text-padding">\n                        {{ contenido_tematico_descripcion }}\n                    </p>\n                    <br>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-top" colspan="10">\n                    {% if contenido_tematico_detalle is iterable and (contenido_tematico_detalle is not string and contenido_tematico_detalle is not mapping) %}\n                    <p class="text-justify text-padding bold">\n                        Temas y subtemas:\n                    </p>\n                    <p class="text-justify text-padding">\n                        <ul>\n                            {% for tema in contenido_tematico_detalle %}\n                            <li> {{ tema.nombre }} </li>\n                                {% if tema.subtemas is iterable and (tema.subtemas is not string and tema.subtemas is not mapping) %}\n                                <ul>\n                                    {% for subtema in tema.subtemas %}\n                                    <li> {{ subtema }} </li>\n                                    {% endfor %}\n                                </ul>\n                                {% endif %}\n                            {% endfor %}\n                        </ul>\n                    </p>\n                    </p>\n                    {% else %}\n                    <p class="text-justify text-padding">\n                        {{ contenido_tematico_detalle }}\n                    </p>\n                    {% endif %}\n                    <br>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        VII. ESTRATEGIAS DE ENSEÑANZA QUE FAVORECEN EL APRENDIZAJE\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-top" colspan="10">\n                    {% if estrategias_ensenanza is iterable and (estrategias_ensenanza is not string and estrategias_ensenanza is not mapping) %}\n                    <p class="text-justify text-padding">\n                        <ul>\n                            {% for estrategia in estrategias_ensenanza %}\n                            <li>{{ estrategia.descripcion|default(\' \') }}</li>\n                            {% endfor %}\n                        </ul>\n                    </p>\n                    </p>\n                    {% else %}\n                    <p class="text-justify text-padding">\n                        {{ estrategias_ensenanza }}\n                    </p>\n                    {% endif %}\n                    <br>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        VIII. EVALUACIÓN\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-bottom" colspan="10">\n                    <p class="text-justify text-padding bold">\n                        Descripción:\n                    </p>\n                    <p class="text-justify text-padding">\n                        {{ evaluacion_descripcion }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-top" colspan="10">\n                    {% if evaluacion_detalle is iterable and (evaluacion_detalle is not string and evaluacion_detalle is not mapping) %}\n                    <p class="text-justify text-padding bold">\n                        Evaluaciones:\n                    </p>\n                    <p class="text-justify text-padding">\n                        <ul>\n                            {% for evaluacion in evaluacion_detalle %}\n                            <li> <strong>Nombre: </strong>{{ evaluacion.nombre }} </li>\n                                <ul>\n                                    <li> <strong>Estrategia: </strong>{{ evaluacion.estrategia }} </li>\n                                    <li> <strong>Momento: </strong>{{ evaluacion.momento }} </li>\n                                    <li> <strong>Porcentaje: </strong>{{ evaluacion.porcentaje }} </li>\n                                </ul>\n                            {% endfor %}\n                        </ul>\n                    </p>\n                    </p>\n                    {% else %}\n                    <p class="text-justify text-padding">\n                        {{ evaluacion_detalle }}\n                    </p>\n                    {% endif %}\n                    <br>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        IX. MEDIOS Y RECURSOS EDUCATIVOS\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify" colspan="10">\n                    <p class="text-justify text-padding">\n                        {{ medios_recursos }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        X. PRÁCTICAS ACADÉMICAS - SALIDAS DE CAMPO\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify" colspan="10">\n                    <p class="text-justify text-padding">\n                        {{ practicas_salidas }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        XI. BIBLIOGRAFÍA\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-bottom" colspan="10">\n                    {% if bibliografia_basica is iterable and (bibliografia_basica is not string and bibliografia_basica is not mapping) %}\n                    <p class="text-justify text-padding bold">\n                        Básicas\n                    </p>\n                    <p class="text-justify text-padding">\n                        <ul>\n                            {% for bibliografia in bibliografia_basica %}\n                            <li> {{ bibliografia }} </li>\n                            {% endfor %}\n                        </ul>\n                    </p>\n                    {% else %}\n                    <p class="text-justify text-padding bold">\n                        Básicas\n                    </p>\n                    <p class="text-justify text-padding">\n                        {{ bibliografia_basica }}\n                    </p>\n                    {% endif %}\n                    <br>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-top without-border-bottom" colspan="10">\n                    {% if bibliografia_complementaria is iterable and (bibliografia_complementaria is not string and bibliografia_complementaria is not mapping) %}\n                    <p class="text-justify text-padding bold">\n                        Complementarias\n                    </p>\n                    <p class="text-justify text-padding">\n                        <ul>\n                            {% for bibliografia in bibliografia_complementaria %}\n                            <li> {{ bibliografia }} </li>\n                            {% endfor %}\n                        </ul>\n                    </p>\n                    {% else %}\n                    <p class="text-justify text-padding bold">\n                        Complementarias\n                    </p>\n                    <p class="text-justify text-padding">\n                        {{ bibliografia_complementaria }}\n                    </p>\n                    {% endif %}\n                    <br>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify without-border-top" colspan="10">\n                    {% if bibliografia_paginas is iterable and (bibliografia_paginas is not string and bibliografia_paginas is not mapping) %}\n                    <p class="text-justify text-padding bold">\n                        Páginas web\n                    </p>\n                    <p class="text-justify text-padding">\n                        <ul>\n                            {% for bibliografia in bibliografia_paginas %}\n                            <li> {{ bibliografia }} </li>\n                            {% endfor %}\n                        </ul>\n                    </p>\n                    {% else %}\n                    <p class="text-justify text-padding bold">\n                        Páginas web\n                    </p>\n                    <p class="text-justify text-padding">\n                        {{ bibliografia_paginas }}\n                    </p>\n                    {% endif %}\n                    <br>\n                </td>\n            </tr>\n            <tr>\n                <td class="bold table-header text-center" colspan="10">\n                    <p class="text-center">\n                        XII. SEGUIMIENTO Y ACTUALIZACIÓN DEL SYLLABUS\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify" colspan="3">\n                    <p class="text-justify">\n                        Fecha revisión por Consejo Curricular:\n                    </p>\n                </td>\n                <td class="text-justify" colspan="3">\n                    <p class="text-justify">\n                        {{ fecha_rev_consejo }}\n                    </p>\n                </td>\n                <td class="text-justify" colspan="2">\n                    <p class="text-justify">\n                        Versión Syllabus:\n                    </p>\n                </td>\n                <td class="text-center" colspan="2">\n                    <p class="text-center">\n                        {{ version_syllabus }}\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td class="text-justify" colspan="3">\n                    <p class="text-justify">\n                        Fecha aprobación por Consejo Curricular:\n                    </p>\n                </td>\n                <td class="text-justify" colspan="3">\n                    <p class="text-justify">\n                        {{ fecha_aprob_consejo }}\n                    </p>\n                </td>\n                <td class="text-justify" colspan="2">\n                    <p class="text-justify">\n                        Número de acta:\n                    </p>\n                </td>\n                <td class="text-center" colspan="2">\n                    <p class="text-center">\n                        {{ num_acta }}\n                    </p>\n                </td>\n            </tr>\n        </table>\n        <div>\n            <p class="version-doc">\n                Documento versión: 12 julio 2023\n            </p>\n        </div>\n    </div>\n</body>\n</html>'
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
+TEMPLATE_PATH = os.path.join(ASSETS_DIR, "plantilla_syllabus.html")
+
+with open(TEMPLATE_PATH, encoding="utf-8") as template_file:
+    TEMPLATE_STR = template_file.read()
+
+MAX_BODY_BYTES = 5 * 1024 * 1024
+MAX_FIELD_CHARS = 250_000
+MAX_IMAGE_BYTES = 2 * 1024 * 1024
+
+ALLOWED_TAGS = frozenset({
+    "p", "br", "div", "span", "strong", "b", "em", "i", "u", "s",
+    "ul", "ol", "li", "h1", "h2", "h3", "h4", "h5", "h6",
+    "table", "thead", "tbody", "tfoot", "caption", "tr", "td", "th",
+    "img", "a", "blockquote", "pre", "code", "hr", "sup", "sub",
+})
+
+ALLOWED_ATTRIBUTES = {
+    "*": {"style", "class", "title"},
+    "a": {"href"},
+    "img": {"src", "alt", "width", "height"},
+    "td": {"colspan", "rowspan"},
+    "th": {"colspan", "rowspan"},
+}
+
+ALLOWED_STYLE_PROPERTIES = frozenset({
+    "color", "background-color", "text-align", "text-decoration",
+    "font-family", "font-size", "font-style", "font-weight",
+    "width", "height", "vertical-align",
+    "border", "border-collapse", "border-color", "border-spacing",
+    "border-style", "border-width", "border-left", "border-right",
+    "border-top", "border-bottom",
+    "padding", "padding-left", "padding-right", "padding-top", "padding-bottom",
+    "margin", "margin-left", "margin-right", "margin-top", "margin-bottom",
+    "list-style-type", "white-space",
+})
+
+DATA_IMAGE_RE = re.compile(r"data:image/[\w.+-]+;base64,([A-Za-z0-9+/=]+)")
+DATA_URI_RE = re.compile(r"data:[\w./+-]*;base64,[A-Za-z0-9+/=]+")
+IMAGE_DATA_URI_RE = re.compile(r"^data:image/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$")
+
+
+DATA_URL_FETCHER = URLFetcher(allowed_protocols={"data"})
+
+
+def _asset_data_uri(filename: str, mime: str) -> str:
+    with open(os.path.join(ASSETS_DIR, filename), "rb") as fh:
+        return "data:%s;base64,%s" % (mime, base64.b64encode(fh.read()).decode("ascii"))
+
+
+ASSETS = {
+    "logo_left": _asset_data_uri("logo_izquierdo.png", "image/png"),
+    "logo_sigud": _asset_data_uri("logo_sigud.jpg", "image/jpeg"),
+}
+
+
+def sanitize_html(value: str) -> str:
+    return nh3.clean(
+        value,
+        tags=ALLOWED_TAGS,
+        attributes=ALLOWED_ATTRIBUTES,
+        url_schemes={"data"},
+        strip_comments=True,
+        filter_style_properties=ALLOWED_STYLE_PROPERTIES,
+    )
+
+
+def is_renderable_image_data_uri(value) -> bool:
+    """True si es una imagen data URI del tipo permitido y dentro del limite."""
+    if not isinstance(value, str) or not IMAGE_DATA_URI_RE.match(value):
+        return False
+    payload = value.rsplit(",", 1)[1]
+    return len(payload) * 3 // 4 <= MAX_IMAGE_BYTES
+
+
+def sanitize_payload(obj):
+    if isinstance(obj, str):
+        return sanitize_html(obj)
+    if isinstance(obj, dict):
+        sanitized = {}
+        for key, value in obj.items():
+            if key == "template_str":
+                sanitized[key] = value
+            elif key == "contenido_tematico_imagen" and is_renderable_image_data_uri(value):
+                # El base64 no es HTML: evita que nh3 lo parsee en cada invocacion.
+                sanitized[key] = value
+            else:
+                sanitized[key] = sanitize_payload(value)
+        return sanitized
+    if isinstance(obj, list):
+        return [sanitize_payload(item) for item in obj]
+    return obj
+
+
+def find_oversized_field(obj, path=""):
+    if isinstance(obj, str):
+        effective_len = len(DATA_URI_RE.sub("", obj))
+        return path if effective_len > MAX_FIELD_CHARS else None
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            found = find_oversized_field(value, f"{path}.{key}" if path else str(key))
+            if found:
+                return found
+    if isinstance(obj, list):
+        for index, item in enumerate(obj):
+            found = find_oversized_field(item, f"{path}[{index}]")
+            if found:
+                return found
+    return None
+
+
+def has_oversized_image(html: str) -> bool:
+    for match in DATA_IMAGE_RE.finditer(html):
+        if len(match.group(1)) * 3 // 4 > MAX_IMAGE_BYTES:
+            return True
+    return False
+
+
+def build_competencia_groups(propositos):
+    grupos = []
+    vistos = {}
+    if not isinstance(propositos, list):
+        return grupos
+    for prop in propositos:
+        if not isinstance(prop, dict):
+            continue
+        nombre = str(prop.get("competencia") or "")
+        if not nombre:
+            continue
+        if nombre not in vistos:
+            vistos[nombre] = {"nombre": nombre, "items": []}
+            grupos.append(vistos[nombre])
+        vistos[nombre]["items"].append(prop)
+    return grupos
+
+
+def resolve_pfa_mode(propositos):
+    """Replica la seleccion exclusiva de rama de la funcion gofpdf."""
+    if not isinstance(propositos, list) or not propositos:
+        return "empty"
+    p0 = propositos[0]
+    if not isinstance(p0, dict):
+        return "v3"
+    if "pfa_programa" in p0:
+        return "blocks"
+    if "propositos_formación_legacy" in p0:
+        return "legacy"
+    return "v3"
 
 
 def make_pdf(html: str):
     """Generate a PDF file from a string of HTML"""
     print("Generating document")
-    html_doc = HTML(string=html)
-    byte_doc = html_doc.write_pdf()
+    html_doc = HTML(string=html, url_fetcher=DATA_URL_FETCHER)
+    byte_doc = html_doc.write_pdf(presentational_hints=True)
     encoded = base64.b64encode(byte_doc)
     print("Generated document")
-    return encoded.decode('utf-8')
+    return encoded.decode("utf-8")
 
 
 def render_html(template_str: str, data: dict):
+    context = dict(data)
+    context.setdefault("assets", ASSETS)
+    propositos = data.get("propositos")
+    context.setdefault("pfa_mode", resolve_pfa_mode(propositos))
+    context.setdefault("competencia_grupos", build_competencia_groups(propositos))
+    detalle = data.get("contenido_tematico_detalle")
+    context.setdefault(
+        "contenido_tematico_items", detalle if isinstance(detalle, list) else []
+    )
     template = Template(template_str)
-    html_result = template.render(**data)
+    html_result = template.render(**context)
     return html_result
 
 
@@ -30,54 +190,65 @@ def parse_body(event) -> tuple:
         return None, ex
 
 
-def format_response(result, message: str, status_code: int, success: bool):
-    if isinstance(result, dict):
-        if success:
-            return {"statusCode": status_code,
-                    "body": json.dumps({
-                        "Success": success,
-                        "Status": status_code,
-                        "Message": message,
-                        "Data": result
-                    })}
-        else:
-            return {"statusCode": status_code,
-                    "body": json.dumps({
-                        "Success": success,
-                        "Status": status_code,
-                        "Message": message
-                    })}
+def format_response(status_code: int, message: str, success: bool, data=None):
+    """Envelope anidado identico al de la funcion gofpdf (Data es b64 plano)."""
+    envelope = {
+        "Success": success,
+        "Status": status_code,
+        "Message": message,
+    }
+    if success:
+        envelope["Data"] = data
+    body = {"statusCode": status_code, "body": envelope}
+    return {"statusCode": status_code, "body": json.dumps(body)}
 
 
 def lambda_handler(event, context):
     try:
-        data, error = parse_body(event)
-        if error is None:
-            print("Starting template rendering")
-            if data.get("template_str"):
-                template_str = data.get("template_str")
-            else:
-                template_str = TEMPLATE_STR
-            # Render template
-            rendered_template = render_html(template_str, data)
-            print("Finished rendering of the template")
-            result_doc_64 = make_pdf(rendered_template)
+        raw_body = event.get("body")
+        if raw_body is None:
             return format_response(
-                {"document": result_doc_64},
-                "Syllabus Template OK",
-                200,
-                True)
-        else:
+                400,
+                "Error in syllabus template lambda! Detail: missing request body",
+                False)
+        if len(raw_body.encode("utf-8")) > MAX_BODY_BYTES:
+            return format_response(
+                400,
+                f"Error in syllabus template lambda! Detail: request body exceeds {MAX_BODY_BYTES} bytes",
+                False)
+        data, error = parse_body(event)
+        if error is not None:
             print(error)
             return format_response(
-                {},
-                "Error error generating syllabus!. Detail: Error in input data",
-                500,
+                400,
+                "Error in syllabus template lambda! Detail: Error in input data",
                 False)
+        data = sanitize_payload(data)
+        oversized = find_oversized_field(data)
+        if oversized is not None:
+            return format_response(
+                400,
+                f"Error in syllabus template lambda! Detail: field '{oversized}' exceeds {MAX_FIELD_CHARS} characters",
+                False)
+        print("Starting template rendering")
+        template_str = data.get("template_str") or TEMPLATE_STR
+        # Render template
+        rendered_template = render_html(template_str, data)
+        print("Finished rendering of the template")
+        if has_oversized_image(rendered_template):
+            return format_response(
+                400,
+                f"Error in syllabus template lambda! Detail: embedded image exceeds {MAX_IMAGE_BYTES} bytes decoded",
+                False)
+        result_doc_64 = make_pdf(rendered_template)
+        return format_response(
+            200,
+            "Syllabus Template OK",
+            True,
+            result_doc_64)
     except Exception as ex:
         print(f"Error in syllabus template lambda. Detail: {ex}")
         return format_response(
-            {},
-            f"Error in syllabus template lambda! Detail: {ex}",
             500,
+            f"Error in syllabus template lambda! Detail: {ex}",
             False)
