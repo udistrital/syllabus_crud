@@ -143,20 +143,6 @@ Resources:
             Path: /v3/syllabus/template
             Method: post
 
-  HealthFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/handlers/health/
-      Handler: app.lambda_handler
-      Runtime: python3.10
-      Timeout: 10
-      Events:
-        Health:
-          Type: Api
-          Properties:
-            Path: /health
-            Method: get
-
 Outputs:
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod stage"
