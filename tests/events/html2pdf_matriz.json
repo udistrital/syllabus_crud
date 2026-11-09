@@ -1,0 +1,9 @@
+{
+  "resource": "/v3/syllabus/template",
+  "path": "/v3/syllabus/template",
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"nombre_facultad\": \"Facultad de Ingeniería\", \"nombre_proyecto_curricular\": \"Ingeniería de Sistemas\", \"nombre_espacio_academico\": \"Cálculo Diferencial\", \"idiomas\": \"Español\", \"cod_espacio_academico\": \"MAT-101\", \"num_creditos\": 4, \"modalidad\": \"Presencial\", \"naturaleza\": \"Obligatoria Básica\", \"caracter\": \"Teórico-Práctico\", \"justificacion\": \"Este espacio academico articula los propositos de formacion del programa con el perfil de egreso.\", \"objetivo_general\": \"Desarrollar el razonamiento matematico para la modelacion de fenomenos de cambio.\", \"objetivos_especificos\": [\"Modelar situaciones de cambio mediante funciones y sus propiedades.\"], \"propositos\": [{\"pfa_matriz\": \"<table><thead><tr><th>Propósitos de Formación</th><th>Relación con resultados</th></tr></thead><tbody><tr><td>Modelar y representar</td><td>RA-1</td></tr><tr><td>Interpretar y decidir</td><td>RA-2</td></tr></tbody></table>\"}], \"contenido_tematico_descripcion\": \"<p>Contenido tematico del espacio academico.</p>\"}"
+}
