@@ -167,6 +167,8 @@
   <tr><td class="texto">{{ pd[i + 2] }} </td></tr>
   {% endfor %}
 </table>
+{% elif pfa_mode == 'matriz' %}
+<div class="html-usuario">{{ propositos[0].get('pfa_matriz') | safe }}</div>
 {% elif pfa_mode == 'v3' %}
 <table class="tabla-competencias">
   <colgroup><col style="width:30%"><col style="width:20%"><col style="width:10%"><col style="width:40%"></colgroup>

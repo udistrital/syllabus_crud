@@ -61,6 +61,35 @@ def test_pfa_branch_mode():
     assert app.resolve_pfa_mode([{"pfa_programa": "x"}]) == "blocks"
     assert app.resolve_pfa_mode([{"propositos_formación_legacy": ["a", "b", "c"]}]) == "legacy"
     assert app.resolve_pfa_mode([{"competencia": "C", "dominio": "B"}]) == "v3"
+    assert app.resolve_pfa_mode([{"pfa_matriz": "<table></table>"}]) == "matriz"
+
+
+def test_matriz_event_renders_table():
+    response = app.lambda_handler(_load_event("html2pdf_matriz.json"), None)
+    assert response["statusCode"] == 200
+    body = _response_body(response)
+    assert base64.b64decode(body["Data"]).startswith(b"%PDF-")
+
+
+def test_matriz_renders_the_stored_table():
+    html = "<table><thead><tr><th>Propósitos de Formación</th><th>Relación</th></tr></thead>" \
+           "<tbody><tr><td>Propósito 1</td><td>Relación 1</td></tr></tbody></table>"
+    rendered = app.render_html(app.TEMPLATE_STR, {
+        "propositos": [{"pfa_matriz": html}],
+    })
+    assert "Propósitos de Formación" in rendered
+    assert "Propósito 1" in rendered
+    assert "Relación 1" in rendered
+
+
+def test_matriz_html_is_sanitized():
+    # El handler sanea el payload antes de renderizar la plantilla.
+    data = app.sanitize_payload({
+        "propositos": [{"pfa_matriz": "<table><tr><td onclick=\"alert(1)\">P</td></tr></table>"}],
+    })
+    rendered = app.render_html(app.TEMPLATE_STR, data)
+    assert "onclick" not in rendered
+    assert "<table>" in rendered
 
 
 def test_competencia_groups_preserve_order():
