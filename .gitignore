@@ -5,3 +5,6 @@ venv/
 *__pycache__/
 
 *.toml
+
+layers/weasyprint-al2023/lib/
+layers/weasyprint-al2023/fonts/
