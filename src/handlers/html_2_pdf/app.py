@@ -145,7 +145,11 @@ def build_competencia_groups(propositos):
 
 
 def resolve_pfa_mode(propositos):
-    """Replica la seleccion exclusiva de rama de la funcion gofpdf."""
+    """Selecciona la rama de renderizado del bloque de propositos.
+
+    El modo se deduce de la forma del contenido: pfa_programa => listado,
+    pfa_matriz => matriz de relacion (HTML de la tabla) y demas => formato v3.
+    """
     if not isinstance(propositos, list) or not propositos:
         return "empty"
     p0 = propositos[0]
@@ -155,6 +159,8 @@ def resolve_pfa_mode(propositos):
         return "blocks"
     if "propositos_formación_legacy" in p0:
         return "legacy"
+    if "pfa_matriz" in p0:
+        return "matriz"
     return "v3"
 
 
