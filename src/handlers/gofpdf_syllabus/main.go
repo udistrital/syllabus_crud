@@ -975,6 +975,22 @@ func trackingSection(pdf *gofpdf.Fpdf, pageStyle PageStyle, data map[string]any)
 	// 	"", 0, "LM", false, 0, "")
 }
 
+// watermark dibuja una marca de agua diagonal semitransparente centrada en la
+// página actual. Se invoca desde el pie de página, por lo que aplica a todas.
+func watermark(pdf *gofpdf.Fpdf, texto string) {
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
+	textoTr := tr(texto)
+	w, h := pdf.GetPageSize()
+	pdf.TransformBegin()
+	pdf.TransformRotate(45, w/2, h/2)
+	pdf.SetAlpha(0.12, "")
+	pdf.SetTextColor(80, 80, 80)
+	pdf.SetFont("Helvetica", "B", 72)
+	pdf.Text(w/2-pdf.GetStringWidth(textoTr)/2, h/2, textoTr)
+	pdf.SetAlpha(1.0, "")
+	pdf.TransformEnd()
+}
+
 func mainSpaceData(pdf *gofpdf.Fpdf, pageStyle PageStyle, data map[string]any) {
 	tr := pdf.UnicodeTranslatorFromDescriptor("")
 	headerTemplate(pdf, pageStyle)
@@ -1042,6 +1058,12 @@ func mainSpaceData(pdf *gofpdf.Fpdf, pageStyle PageStyle, data map[string]any) {
 
 		pdf.MultiCell(footerWidth, 3, tr(`Estimada y estimado estudiante, si usted es una persona con discapacidad o cree que podría tener un problema dificultad o necesidad de aprendizaje y que requiere apoyos para cursar esta asignatura, por favor ponerse en contacto con el Centro Acacia al correo: cadep.acacia@udistrital.edu.co, o al teléfono: 601 3239300 Extensión 6213`),
 			"", "C", false)
+
+		// Marca de agua diagonal para propuestas no publicadas (borrador/en revisión).
+		marcaAgua := strings.TrimSpace(fmt.Sprintf("%v", data["marca_agua"]))
+		if marcaAgua != "" && marcaAgua != "<nil>" {
+			watermark(pdf, marcaAgua)
+		}
 	})
 
 	identificationSection(pdf, pageStyle, data)

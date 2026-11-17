@@ -74,6 +74,18 @@ Resources:
             Path: /syllabus/{id}
             Method: put
 
+        PutSyllabusEstado:
+          Type: Api
+          Properties:
+            Path: /syllabus/{id}/estado
+            Method: put
+
+        PutSyllabusPublicar:
+          Type: Api
+          Properties:
+            Path: /syllabus/{id}/publicar
+            Method: put
+
         DeleteSyllabus:
           Type: Api
           Properties:
@@ -96,34 +108,40 @@ Resources:
             Path: /v2/syllabus/template
             Method: post
 
-  PostSyllabusXLSXFunction:
+  WeasyPrintLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: syllabus-weasyprint-libs
+      Description: Pango, cairo, gdk-pixbuf, fontconfig y fuentes para WeasyPrint (AL2023, x86_64)
+      ContentUri: layers/weasyprint-al2023/
+      CompatibleRuntimes:
+        - python3.12
+      CompatibleArchitectures:
+        - x86_64
+      LicenseInfo: Apache-2.0
+
+  PostSyllabusHtml2PdfFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/handlers/spreadsheet_syllabus/
-      Handler: spreadsheet_syllabus
-      Runtime: go1.x
+      CodeUri: src/handlers/html_2_pdf/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      MemorySize: 1024
       Architectures:
         - x86_64
+      Layers:
+        - !Ref WeasyPrintLayer
+      Environment:
+        Variables:
+          LD_LIBRARY_PATH: /opt/lib
+          FONTCONFIG_PATH: /opt/fonts
+          GDK_PIXBUF_MODULE_FILE: /opt/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
       Events:
-        GetSyllabusXLSX:
+        PostSyllabusHtml2Pdf:
           Type: Api
           Properties:
-            Path: /syllabus/template/spreadsheet
+            Path: /v3/syllabus/template
             Method: post
-
-  HealthFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/handlers/health/
-      Handler: app.lambda_handler
-      Runtime: python3.10
-      Timeout: 10
-      Events:
-        Health:
-          Type: Api
-          Properties:
-            Path: /health
-            Method: get
 
 Outputs:
   WebEndpoint:

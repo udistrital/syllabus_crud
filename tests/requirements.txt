@@ -1,0 +1,3 @@
+-r ../src/handlers/crud_syllabus/requirements.txt
+-r ../src/handlers/html_2_pdf/requirements.txt
+pytest
