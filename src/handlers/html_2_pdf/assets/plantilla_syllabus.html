@@ -48,6 +48,7 @@
 </style>
 </head>
 <body>
+{% if not sin_cabecera %}
 <table class="cabecera">
   <tr>
     <td style="width:20%"><img src="{{ assets.logo_left }}" style="height:35mm"></td>
@@ -62,12 +63,13 @@
       <table>
         <tr><td>Código: CC-FR-003</td></tr>
         <tr><td>Versión: 02</td></tr>
-        <tr class="cabecera-fila-alta"><td>Fecha de Aprobación: XX-XX-2026</td></tr>
+        <tr class="cabecera-fila-alta"><td>Fecha de Aprobación: 20-11-2026</td></tr>
       </table>
     </td>
     <td style="width:30%"><img src="{{ assets.logo_sigud }}" style="width:38mm;max-height:40mm"></td>
   </tr>
 </table>
+{% endif %}
 
 <table>
   <colgroup>{% for _ in range(10) %}<col style="width:10%">{% endfor %}</colgroup>
