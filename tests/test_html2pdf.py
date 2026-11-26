@@ -221,6 +221,34 @@ def test_watermark_and_inst_headlines_rendered():
     assert "Borrador".upper() in rendered
 
 
+def test_propuesta_se_genera_sin_cabecera_institucional():
+    rendered = app.render_html(app.TEMPLATE_STR, {"sin_cabecera": True})
+    assert "FORMATO DE SYLLABUS" not in rendered
+    assert "Macroproceso" not in rendered
+    assert "CC-FR-003" not in rendered
+    assert app.ASSETS["logo_left"] not in rendered
+    assert app.ASSETS["logo_sigud"] not in rendered
+    # El resto del documento se conserva.
+    assert "IDENTIFICACIÓN INSTITUCIONAL" in rendered
+
+
+def test_syllabus_normal_conserva_la_cabecera_institucional():
+    rendered = app.render_html(app.TEMPLATE_STR, {})
+    assert "FORMATO DE SYLLABUS" in rendered
+    assert "Macroproceso" in rendered
+    assert "CC-FR-003" in rendered
+    assert app.ASSETS["logo_left"] in rendered
+    assert app.ASSETS["logo_sigud"] in rendered
+
+
+def test_propuesta_genera_pdf_sin_cabecera():
+    response = app.lambda_handler(
+        _event({"sin_cabecera": True, "nombre_espacio_academico": "Propuesta de asignatura"}), None)
+    assert response["statusCode"] == 200
+    body = _response_body(response)
+    assert base64.b64decode(body["Data"]).startswith(b"%PDF-")
+
+
 def test_thematic_label_hidden_without_detail():
     rendered = app.render_html(app.TEMPLATE_STR, {
         "contenido_tematico_descripcion": "<p>Descripcion enriquecida</p>",
